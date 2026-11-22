@@ -22,6 +22,15 @@ function ve_base_url(): string
         return rtrim($configured, '/');
     }
     $dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+    // A script in a subfolder (e.g. admin/api.php) still resolves to the project root URL.
+    $root = str_replace('\\', '/', (string) realpath(dirname(__DIR__, 2)));
+    $scriptDir = str_replace('\\', '/', dirname((string) realpath($_SERVER['SCRIPT_FILENAME'] ?? '')));
+    if ($root !== '' && str_starts_with($scriptDir, $root)) {
+        $sub = substr($scriptDir, strlen($root));
+        if ($sub !== '' && str_ends_with($dir, $sub)) {
+            $dir = substr($dir, 0, -strlen($sub));
+        }
+    }
     return rtrim($dir, '/');
 }
 

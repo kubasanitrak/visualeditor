@@ -5,7 +5,7 @@ An edit-what-you-see content editor add-on for simple portfolio websites. **Read
 ## Status
 
 - **Phase 0 (Foundation): done.** Pages render from the DB; style library v1 + manifest; migrations runner; demo seed; first admin account created by the installer.
-- **Phase 1 (Content editing MVP): next.** Login (email + password), edit-mode switch, inline text editing, media upload + tray, replace image/video, add/repeat items from a small component library, delete with confirmation, page slug + OG image.
+- **Phase 1 (Content editing MVP): built, gate pending** (owner edits a page end to end). Login at `/admin/` (email + password, session cookie `ve_admin`), `admin/bootstrap.php` injects the editor only for a logged-in owner, `admin/api.php` JSON API (CSRF header `X-VE-CSRF`), editor in `admin/assets/` (ES modules, no build). Component presets live in `site/components.json`.
 - Styling choices (item/page/global settings from predefined classes) belong to **Phase 2**, not the MVP.
 
 ## Hard constraints
@@ -24,8 +24,9 @@ index.php            front controller (slug -> page), optional admin hook
 site/lib/            db.php, render.php (site runtime, no admin knowledge)
 site/templates/      layout.php + items/<type>.php (section, row, col, heading, text, image, video)
 site/css/            base.css (tokens), library.css (style classes)
+site/components.json component presets the editor can add (item trees)
 site/js/site.js      scroll-triggered animations
-admin/               admin core: install.php, migrations/NNN_*.sql (Phase 1 adds bootstrap.php, api/, editor assets)
+admin/               admin core: install.php, migrations/, bootstrap.php, login/logout.php, api.php, lib/, assets/ (editor.js, editor.css, js/)
 config/config.php    local settings + admin email/password hash. NOT in git; never commit it.
 uploads/             media; uploads/demo/ holds seed placeholders
 docs/brief.md        project brief

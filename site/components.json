@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "note": "Predefined components the editor can add. 'tree' is an item tree (type, content, classes, children). Classes must exist in styles.manifest.json. Avoid double quotes inside HTML strings.",
+  "components": [
+    {
+      "id": "heading",
+      "label": "Heading",
+      "tree": { "type": "heading", "content": { "text": "New heading", "level": 2 }, "classes": "type-h2" }
+    },
+    {
+      "id": "text",
+      "label": "Text",
+      "tree": { "type": "text", "content": { "html": "<p>Write something here.</p>" }, "classes": "measure" }
+    },
+    {
+      "id": "image",
+      "label": "Image",
+      "tree": { "type": "image", "content": {}, "classes": "fit-cover ratio-4-3" }
+    },
+    {
+      "id": "video",
+      "label": "Video",
+      "tree": { "type": "video", "content": { "controls": true }, "classes": "ratio-16-9" }
+    },
+    {
+      "id": "image-text",
+      "label": "Image + text",
+      "tree": {
+        "type": "row", "classes": "cols-2 gap-l align-center",
+        "children": [
+          { "type": "col", "children": [ { "type": "image", "content": {}, "classes": "fit-cover ratio-4-3" } ] },
+          { "type": "col", "children": [
+            { "type": "heading", "content": { "text": "Project title", "level": 2 }, "classes": "type-h2" },
+            { "type": "text", "content": { "html": "<p>A short description of the project.</p>" } }
+          ] }
+        ]
+      }
+    },
+    {
+      "id": "text-section",
+      "label": "Text section",
+      "tree": {
+        "type": "section",
+        "children": [
+          { "type": "heading", "content": { "text": "New section", "level": 2 }, "classes": "type-h2" },
+          { "type": "text", "content": { "html": "<p>Write something here.</p>" }, "classes": "measure" }
+        ]
+      }
+    },
+    {
+      "id": "gallery-3",
+      "label": "Gallery, 3 images",
+      "tree": {
+        "type": "section", "classes": "space-s",
+        "children": [
+          { "type": "row", "classes": "cols-3", "children": [
+            { "type": "col", "children": [ { "type": "image", "content": { "caption": "Caption" }, "classes": "fit-cover ratio-3-4" } ] },
+            { "type": "col", "children": [ { "type": "image", "content": { "caption": "Caption" }, "classes": "fit-cover ratio-3-4" } ] },
+            { "type": "col", "children": [ { "type": "image", "content": { "caption": "Caption" }, "classes": "fit-cover ratio-3-4" } ] }
+          ] }
+        ]
+      }
+    }
+  ]
+}

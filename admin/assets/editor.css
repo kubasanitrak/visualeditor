@@ -1,0 +1,233 @@
+/* Visual Editor UI. Everything is namespaced (ve-admin-*) so it never clashes with site CSS. */
+
+:root {
+    --ve-admin-ink: #111;
+    --ve-admin-paper: #fff;
+    --ve-admin-line: rgba(0, 0, 0, .12);
+    --ve-admin-muted: #6b6b6b;
+    --ve-admin-hover: rgba(0, 0, 0, .06);
+    --ve-admin-accent: #2f5bff;
+    --ve-admin-danger: #d22d2d;
+    --ve-admin-ok: #1f8a4c;
+    --ve-admin-radius: 8px;
+    --ve-admin-shadow: 0 8px 28px rgba(0, 0, 0, .18), 0 1px 3px rgba(0, 0, 0, .12);
+    --ve-admin-z: 2147483000;
+}
+
+/* ---------- reset inside editor UI ---------- */
+.ve-admin-ui,
+.ve-admin-ui * {
+    box-sizing: border-box;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
+    letter-spacing: normal;
+    text-transform: none;
+    font-weight: 400;
+}
+.ve-admin-ui {
+    color: var(--ve-admin-ink);
+    -webkit-font-smoothing: antialiased;
+}
+.ve-admin-ui h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.ve-admin-ui p { margin: 0; }
+.ve-admin-ui b { font-weight: 700; }
+.ve-admin-ui[hidden], .ve-admin-ui [hidden] { display: none !important; }
+.ve-admin-icon { display: block; flex: none; image-rendering: pixelated; }
+.ve-admin-muted { color: var(--ve-admin-muted); }
+.ve-admin-error, .ve-admin-field-error { color: var(--ve-admin-danger); }
+.ve-admin-field-error:empty { display: none; }
+
+/* ---------- buttons ---------- */
+.ve-admin-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 32px; padding: 0 10px; margin: 0;
+    border: 0; border-radius: 6px;
+    background: transparent; color: inherit;
+    cursor: pointer; white-space: nowrap;
+    -webkit-appearance: none; appearance: none;
+}
+.ve-admin-btn:hover { background: var(--ve-admin-hover); }
+.ve-admin-btn:focus-visible { outline: 2px solid var(--ve-admin-accent); outline-offset: 1px; }
+.ve-admin-btn:disabled { opacity: .45; cursor: default; }
+.ve-admin-icon-btn { width: 32px; padding: 0; justify-content: center; }
+.ve-admin-btn-primary { background: var(--ve-admin-ink); color: #fff; }
+.ve-admin-btn-primary:hover { background: #333; }
+.ve-admin-btn-danger { background: var(--ve-admin-danger); color: #fff; }
+.ve-admin-btn-danger:hover { background: #b02222; }
+.ve-admin-danger:hover { color: var(--ve-admin-danger); }
+.ve-admin-fmt b, .ve-admin-fmt i { font-size: 14px; font-family: Georgia, serif; }
+.ve-admin-fmt b { font-weight: 700; }
+.ve-admin-fmt i { font-style: italic; }
+.ve-admin-sep { width: 1px; height: 20px; background: var(--ve-admin-line); margin: 0 2px; }
+
+/* ---------- floating bar ---------- */
+.ve-admin-bar {
+    position: fixed; z-index: var(--ve-admin-z);
+    left: 50%; bottom: 16px; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 2px;
+    padding: 4px; max-width: calc(100vw - 16px);
+    background: var(--ve-admin-paper);
+    border-radius: 10px; box-shadow: var(--ve-admin-shadow);
+}
+.ve-admin-bar-tools { display: none; align-items: center; gap: 2px; }
+.ve-admin-editing .ve-admin-bar-tools { display: flex; }
+.ve-admin-save-state { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; color: var(--ve-admin-muted); min-width: 64px; }
+.ve-admin-save-state:empty { display: none; }
+.ve-admin-save-state[data-state=ok] { color: var(--ve-admin-ok); }
+.ve-admin-save-state[data-state=error] { color: var(--ve-admin-danger); }
+@media (max-width: 520px) {
+    .ve-admin-bar-tools .ve-admin-btn > span { display: none; }
+}
+
+/* edit switch */
+.ve-admin-toggle { font-weight: 600; }
+.ve-admin-switch {
+    position: relative; width: 28px; height: 16px; border-radius: 8px;
+    background: #c9c9c9; transition: background .15s;
+}
+.ve-admin-switch::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 12px; height: 12px; border-radius: 50%; background: #fff;
+    transition: transform .15s;
+}
+.ve-admin-toggle[aria-pressed=true] .ve-admin-switch { background: var(--ve-admin-accent); }
+.ve-admin-toggle[aria-pressed=true] .ve-admin-switch::after { transform: translateX(12px); }
+
+/* ---------- item toolbar ---------- */
+.ve-admin-itembar {
+    position: fixed; z-index: var(--ve-admin-z); top: 0; left: 0;
+    display: flex; align-items: center; gap: 1px; padding: 3px;
+    background: var(--ve-admin-paper); border-radius: 8px; box-shadow: var(--ve-admin-shadow);
+}
+.ve-admin-itembar .ve-admin-btn { height: 28px; }
+.ve-admin-itembar .ve-admin-icon-btn { width: 28px; }
+.ve-admin-itembar-label {
+    padding: 0 8px; color: var(--ve-admin-muted);
+    font-size: 11px !important; text-transform: uppercase !important; letter-spacing: .06em !important;
+}
+
+/* ---------- page items in edit mode ---------- */
+.ve-admin-editing [data-ve-admin-hover] { outline: 1px dashed rgba(47, 91, 255, .8); outline-offset: 1px; }
+.ve-admin-editing [data-ve-admin-selected] { outline: 2px solid var(--ve-admin-accent); outline-offset: 1px; }
+.ve-admin-editing [data-ve-admin-field] { cursor: text; }
+.ve-admin-editing [data-ve-admin-field]:focus { outline: 2px solid rgba(47, 91, 255, .35); outline-offset: 2px; }
+.ve-admin-editing [data-ve-admin-field]:empty::before {
+    content: attr(data-ve-admin-placeholder);
+    opacity: .45; pointer-events: none;
+}
+.ve-admin-editing [data-ve-type=image] .ve-media-frame,
+.ve-admin-editing [data-ve-type=video] .ve-media-frame { cursor: pointer; }
+/* empty containers stay clickable */
+.ve-admin-editing [data-ve-type=section]:empty,
+.ve-admin-editing [data-ve-type=row]:empty,
+.ve-admin-editing [data-ve-type=col]:empty { min-height: 48px; outline: 1px dashed var(--ve-admin-line); outline-offset: -1px; }
+/* animations would hide items while editing */
+.ve-admin-editing [class*="anim-"] { opacity: 1 !important; transform: none !important; transition: none !important; }
+figcaption.ve-admin-ghost:not(:focus):empty { opacity: .8; }
+html:not(.ve-admin-editing) figcaption.ve-admin-ghost { display: none; }
+.ve-admin-editing { padding-bottom: 72px; }
+
+/* ---------- menu ---------- */
+.ve-admin-menu {
+    position: fixed; z-index: calc(var(--ve-admin-z) + 1); top: 0; left: 0;
+    display: flex; flex-direction: column; padding: 4px; min-width: 220px;
+    background: var(--ve-admin-paper); border-radius: 8px; box-shadow: var(--ve-admin-shadow);
+}
+.ve-admin-menu-hint { padding: 6px 8px; color: var(--ve-admin-muted); font-size: 12px !important; max-width: 240px; }
+.ve-admin-menu-item {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    height: 32px; padding: 0 8px; border: 0; border-radius: 6px;
+    background: none; color: inherit; text-align: left; cursor: pointer;
+}
+.ve-admin-menu-item:hover:not(:disabled), .ve-admin-menu-item:focus-visible { background: var(--ve-admin-hover); outline: none; }
+.ve-admin-menu-item:disabled { opacity: .4; cursor: default; }
+
+/* ---------- drawer ---------- */
+.ve-admin-drawer {
+    position: fixed; z-index: calc(var(--ve-admin-z) + 2); top: 8px; right: 8px; bottom: 8px;
+    width: min(380px, calc(100vw - 16px));
+    display: flex; flex-direction: column;
+    background: var(--ve-admin-paper); border-radius: 10px; box-shadow: var(--ve-admin-shadow);
+}
+.ve-admin-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 8px 10px 16px; border-bottom: 1px solid var(--ve-admin-line); }
+.ve-admin-drawer-body { flex: 1; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+.ve-admin-dragging { outline: 3px dashed var(--ve-admin-accent); outline-offset: -6px; }
+
+/* fields */
+.ve-admin-field { display: flex; flex-direction: column; gap: 6px; }
+.ve-admin-field > span { font-weight: 600; }
+.ve-admin-field input, .ve-admin-field textarea,
+.ve-admin-login input {
+    width: 100%; padding: 8px 10px; margin: 0;
+    border: 1px solid var(--ve-admin-line); border-radius: 6px;
+    background: #fff; color: var(--ve-admin-ink); font: inherit; resize: vertical;
+}
+.ve-admin-field input:focus, .ve-admin-field textarea:focus,
+.ve-admin-login input:focus { outline: 2px solid var(--ve-admin-accent); outline-offset: -1px; border-color: transparent; }
+.ve-admin-field input:disabled { background: #f3f3f3; color: var(--ve-admin-muted); }
+.ve-admin-field small { font-size: 12px; overflow-wrap: anywhere; }
+
+/* share image */
+.ve-admin-og { display: flex; gap: 12px; align-items: center; }
+.ve-admin-og img, .ve-admin-og-empty {
+    width: 120px; aspect-ratio: 1200 / 630; object-fit: cover; border-radius: 6px;
+    background: #f0f0f0; display: grid; place-items: center; flex: none;
+}
+.ve-admin-og-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.ve-admin-og-actions .ve-admin-btn { background: var(--ve-admin-hover); }
+
+/* ---------- media tray ---------- */
+.ve-admin-tray-drop {
+    display: flex; align-items: center; gap: 12px; padding: 14px;
+    border: 1px dashed var(--ve-admin-line); border-radius: 8px;
+}
+.ve-admin-tray-status { font-size: 12px !important; margin-top: -8px !important; }
+.ve-admin-tray-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; align-content: start; }
+.ve-admin-tile { position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ve-admin-tile-main {
+    position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; margin: 0;
+    border: 0; border-radius: 6px; overflow: hidden; background: #f0f0f0; cursor: default;
+}
+.ve-admin-tile-main[aria-label^="Use"] { cursor: pointer; }
+.ve-admin-tile-main[aria-label^="Use"]:hover { outline: 2px solid var(--ve-admin-accent); outline-offset: -2px; }
+.ve-admin-tile-main img, .ve-admin-tile-main video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ve-admin-tile-badge { position: absolute; left: 4px; bottom: 4px; padding: 2px; border-radius: 4px; background: rgba(0, 0, 0, .6); color: #fff; }
+.ve-admin-tile-name { font-size: 11px !important; color: var(--ve-admin-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ve-admin-tile-delete {
+    position: absolute !important; top: 4px; right: 4px; width: 28px !important; height: 28px !important;
+    background: rgba(255, 255, 255, .92) !important; opacity: 0; transition: opacity .1s;
+}
+.ve-admin-tile:hover .ve-admin-tile-delete, .ve-admin-tile-delete:focus-visible { opacity: 1; }
+@media (hover: none) { .ve-admin-tile-delete { opacity: 1; } }
+
+/* ---------- dialog ---------- */
+.ve-admin-dialog {
+    width: min(400px, calc(100vw - 32px)); padding: 20px; border: 0;
+    border-radius: 12px; box-shadow: var(--ve-admin-shadow); background: var(--ve-admin-paper);
+}
+.ve-admin-dialog::backdrop { background: rgba(0, 0, 0, .35); }
+.ve-admin-dialog p { margin-top: 8px; color: var(--ve-admin-muted); }
+.ve-admin-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+.ve-admin-dialog-actions .ve-admin-btn:first-child { background: var(--ve-admin-hover); }
+
+/* ---------- toast ---------- */
+.ve-admin-toast {
+    position: fixed; z-index: calc(var(--ve-admin-z) + 3); left: 50%; bottom: 72px;
+    transform: translate(-50%, 8px); opacity: 0; pointer-events: none;
+    padding: 8px 14px; border-radius: 8px; background: var(--ve-admin-ink); color: #fff;
+    box-shadow: var(--ve-admin-shadow); transition: opacity .15s, transform .15s; max-width: calc(100vw - 32px);
+}
+.ve-admin-toast[data-type=error] { background: var(--ve-admin-danger); }
+.ve-admin-toast.ve-admin-show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- login page ---------- */
+.ve-admin-login-page { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f6f5f2; padding: 16px; }
+.ve-admin-login {
+    width: min(360px, 100%); display: flex; flex-direction: column; gap: 14px;
+    padding: 28px; background: #fff; border-radius: 12px; box-shadow: var(--ve-admin-shadow);
+}
+.ve-admin-login h1 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+.ve-admin-login label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
+.ve-admin-login .ve-admin-btn { justify-content: center; height: 38px; }
+.ve-admin-login a { text-align: center; font-size: 12px; }

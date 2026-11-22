@@ -239,22 +239,22 @@ absent.
 
 ### Phase 1: Content editing (MVP)
 
-- [ ] Login with email + password, sessions, logout
+- [x] Login with email + password, sessions, logout
 
-- [ ] Edit mode show/hide switch; editor assets load only when logged in
+- [x] Edit mode show/hide switch; editor assets load only when logged in
 
-- [ ] Inline text editing, saved to DB
+- [x] Inline text editing, saved to DB
 
-- [ ] Media upload (multiple images and videos) + thumbnail tray
+- [x] Media upload (multiple images and videos) + thumbnail tray
 
-- [ ] Replace image/video in a container (pick from tray)
+- [x] Replace image/video in a container (pick from tray)
 
-- [ ] Add items from a small predefined component library; repeat
+- [x] Add items from a small predefined component library; repeat
   components
 
-- [ ] Delete with confirmation dialog
+- [x] Delete with confirmation dialog
 
-- [ ] Page meta: custom slug, social share image
+- [x] Page meta: custom slug, social share image
 
 **Gate:** the site owner updates a portfolio page end to end without
 touching code.
