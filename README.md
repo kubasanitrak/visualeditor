@@ -24,6 +24,8 @@ admin/                 admin core: removable, updatable
   install.php          migrations runner
   migrations/          NNN_name.sql, applied in order
 uploads/               media (demo placeholders included)
+docs/brief.md          project brief: scope, architecture, phases
+CLAUDE.md              working notes for Claude Code
 ```
 
 ## Local setup (MAMP)
