@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "note": "Registry of predefined style classes. The editor builds its pickers from this file. Each class must exist in site/css/library.css. 'applies' lists the item types a class is offered for; 'exclusive' means only one class from the group at a time.",
+  "groups": [
+    {
+      "id": "section-space",
+      "label": "Section spacing",
+      "applies": ["section"],
+      "exclusive": true,
+      "classes": [
+        { "class": "space-s", "label": "Small" },
+        { "class": "space-none", "label": "None" },
+        { "class": "full-bleed", "label": "Full bleed" }
+      ]
+    },
+    {
+      "id": "columns",
+      "label": "Columns",
+      "applies": ["row"],
+      "exclusive": true,
+      "classes": [
+        { "class": "cols-2", "label": "2 columns" },
+        { "class": "cols-3", "label": "3 columns" },
+        { "class": "cols-4", "label": "4 columns" },
+        { "class": "cols-auto", "label": "Auto fit" }
+      ]
+    },
+    {
+      "id": "gap",
+      "label": "Gap",
+      "applies": ["row"],
+      "exclusive": true,
+      "classes": [
+        { "class": "gap-none", "label": "None" },
+        { "class": "gap-l", "label": "Large" }
+      ]
+    },
+    {
+      "id": "align",
+      "label": "Vertical align",
+      "applies": ["row"],
+      "exclusive": true,
+      "classes": [
+        { "class": "align-center", "label": "Center" },
+        { "class": "align-end", "label": "Bottom" }
+      ]
+    },
+    {
+      "id": "span",
+      "label": "Column span",
+      "applies": ["col"],
+      "exclusive": true,
+      "classes": [
+        { "class": "span-2", "label": "Span 2" },
+        { "class": "span-full", "label": "Full row" }
+      ]
+    },
+    {
+      "id": "ratio",
+      "label": "Aspect ratio",
+      "applies": ["image", "video"],
+      "exclusive": true,
+      "classes": [
+        { "class": "ratio-1-1", "label": "1:1" },
+        { "class": "ratio-4-3", "label": "4:3" },
+        { "class": "ratio-3-4", "label": "3:4" },
+        { "class": "ratio-16-9", "label": "16:9" },
+        { "class": "ratio-21-9", "label": "21:9" }
+      ]
+    },
+    {
+      "id": "fit",
+      "label": "Fit",
+      "applies": ["image", "video"],
+      "exclusive": true,
+      "classes": [
+        { "class": "fit-cover", "label": "Fill (cover)" },
+        { "class": "fit-contain", "label": "Fit (contain)" }
+      ]
+    },
+    {
+      "id": "type",
+      "label": "Text style",
+      "applies": ["heading", "text"],
+      "exclusive": true,
+      "classes": [
+        { "class": "type-display", "label": "Display" },
+        { "class": "type-h1", "label": "Heading 1" },
+        { "class": "type-h2", "label": "Heading 2" },
+        { "class": "type-h3", "label": "Heading 3" },
+        { "class": "type-lead", "label": "Lead" },
+        { "class": "type-small", "label": "Small" }
+      ]
+    },
+    {
+      "id": "text-modifiers",
+      "label": "Text options",
+      "applies": ["heading", "text"],
+      "exclusive": false,
+      "classes": [
+        { "class": "type-muted", "label": "Muted" },
+        { "class": "text-center", "label": "Centered" },
+        { "class": "text-right", "label": "Right" },
+        { "class": "text-upper", "label": "Uppercase" },
+        { "class": "measure", "label": "Readable width" }
+      ]
+    },
+    {
+      "id": "position",
+      "label": "Position",
+      "applies": ["section", "row", "col", "heading", "text", "image", "video"],
+      "exclusive": true,
+      "classes": [
+        { "class": "pos-sticky", "label": "Sticky" },
+        { "class": "pos-fixed-top", "label": "Fixed top" }
+      ]
+    },
+    {
+      "id": "animation",
+      "label": "Animation",
+      "applies": ["section", "row", "col", "heading", "text", "image", "video"],
+      "exclusive": true,
+      "classes": [
+        { "class": "anim-fade-in", "label": "Fade in" },
+        { "class": "anim-slide-up", "label": "Slide up" },
+        { "class": "anim-slide-left", "label": "Slide in from right" },
+        { "class": "anim-slide-right", "label": "Slide in from left" },
+        { "class": "anim-zoom-in", "label": "Zoom in" }
+      ]
+    },
+    {
+      "id": "delay",
+      "label": "Animation delay",
+      "applies": ["section", "row", "col", "heading", "text", "image", "video"],
+      "exclusive": true,
+      "classes": [
+        { "class": "delay-1", "label": "Short" },
+        { "class": "delay-2", "label": "Medium" },
+        { "class": "delay-3", "label": "Long" }
+      ]
+    }
+  ]
+}

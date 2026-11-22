@@ -1,0 +1,170 @@
+<?php
+/**
+ * Page renderer. Reads pages and items from the database and renders them
+ * with the templates in /site/templates. Knows nothing about the admin core.
+ */
+
+require_once __DIR__ . '/db.php';
+
+const VE_CONTAINER_TYPES = ['section', 'row', 'col'];
+
+/* ---------- helpers ---------- */
+
+function e(?string $s): string
+{
+    return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function ve_base_url(): string
+{
+    $configured = ve_config()['base_url'] ?? null;
+    if ($configured) {
+        return rtrim($configured, '/');
+    }
+    $dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+    return rtrim($dir, '/');
+}
+
+function ve_url(string $path = ''): string
+{
+    return ve_base_url() . '/' . ltrim($path, '/');
+}
+
+/** Keep only safe class-name characters. Classes come from the style manifest. */
+function ve_classes(?string $classes): string
+{
+    $parts = preg_split('/\s+/', trim((string) $classes)) ?: [];
+    $safe = array_filter($parts, fn($c) => preg_match('/^[a-z][a-z0-9-]*$/', $c));
+    return implode(' ', array_unique($safe));
+}
+
+function ve_json(?string $json): array
+{
+    if ($json === null || $json === '') {
+        return [];
+    }
+    $data = json_decode($json, true);
+    return is_array($data) ? $data : [];
+}
+
+/* ---------- data ---------- */
+
+function ve_settings(): array
+{
+    static $settings = null;
+    if ($settings === null) {
+        $settings = [];
+        foreach (q('SELECT `key`, `value` FROM settings')->fetchAll() as $row) {
+            $settings[$row['key']] = json_decode($row['value'], true);
+        }
+    }
+    return $settings;
+}
+
+function ve_get_page(string $slug): ?array
+{
+    $page = q('SELECT * FROM pages WHERE slug = ? AND status = "published" LIMIT 1', [$slug])->fetch();
+    if (!$page) {
+        return null;
+    }
+    $page['settings'] = ve_json($page['settings']);
+    return $page;
+}
+
+/** All items of a page, as a tree ordered by sort. */
+function ve_get_items(int $pageId): array
+{
+    $rows = q('SELECT * FROM items WHERE page_id = ? ORDER BY sort, id', [$pageId])->fetchAll();
+    $byParent = [];
+    foreach ($rows as $row) {
+        $row['content']  = ve_json($row['content']);
+        $row['settings'] = ve_json($row['settings']);
+        $byParent[(int) $row['parent_id']][] = $row;
+    }
+    $build = function (int $parentId) use (&$build, $byParent): array {
+        $out = [];
+        foreach ($byParent[$parentId] ?? [] as $item) {
+            $item['children'] = $build((int) $item['id']);
+            $out[] = $item;
+        }
+        return $out;
+    };
+    return $build(0);
+}
+
+function ve_media(?int $id): ?array
+{
+    static $cache = [];
+    if (!$id) {
+        return null;
+    }
+    if (!array_key_exists($id, $cache)) {
+        $cache[$id] = q('SELECT * FROM media WHERE id = ?', [$id])->fetch() ?: null;
+    }
+    return $cache[$id];
+}
+
+function ve_media_url(?array $media): string
+{
+    return $media ? ve_url('uploads/' . $media['filename']) : '';
+}
+
+/* ---------- rendering ---------- */
+
+function ve_template(string $name, array $vars = []): string
+{
+    $file = dirname(__DIR__) . '/templates/' . $name . '.php';
+    if (!is_file($file)) {
+        return '<!-- missing template: ' . e($name) . ' -->';
+    }
+    extract($vars, EXTR_SKIP);
+    ob_start();
+    include $file;
+    return (string) ob_get_clean();
+}
+
+function ve_render_item(array $item): string
+{
+    $type = preg_replace('/[^a-z0-9_-]/', '', $item['type']);
+    $children = '';
+    if (in_array($type, VE_CONTAINER_TYPES, true)) {
+        foreach ($item['children'] as $child) {
+            $children .= ve_render_item($child);
+        }
+    }
+
+    $s = $item['settings'];
+    $style = [];
+    if (!empty($s['bg']))     $style[] = '--item-bg:' . preg_replace('/[^#a-zA-Z0-9(),.% -]/', '', $s['bg']);
+    if (!empty($s['color']))  $style[] = '--item-color:' . preg_replace('/[^#a-zA-Z0-9(),.% -]/', '', $s['color']);
+    if (!empty($s['width']))  $style[] = '--item-width:' . preg_replace('/[^a-z0-9.%]/', '', $s['width']);
+
+    return ve_template('items/' . $type, [
+        'item'     => $item,
+        'content'  => $item['content'],
+        'children' => $children,
+        // Shared attributes: the editor (when present) finds items by data-ve-id.
+        'attrs'    => sprintf(
+            'data-ve-id="%d" data-ve-type="%s" class="ve-%s %s"%s',
+            $item['id'],
+            e($type),
+            e($type),
+            e(ve_classes($item['classes'])),
+            $style ? ' style="' . e(implode(';', $style)) . '"' : ''
+        ),
+    ]);
+}
+
+function ve_render_page(array $page): string
+{
+    $body = '';
+    foreach (ve_get_items((int) $page['id']) as $item) {
+        $body .= ve_render_item($item);
+    }
+    return ve_template('layout', [
+        'page'     => $page,
+        'body'     => $body,
+        'settings' => ve_settings(),
+        'og'       => ve_media($page['og_image_id'] ? (int) $page['og_image_id'] : null),
+    ]);
+}

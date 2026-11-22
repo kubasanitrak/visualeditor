@@ -1,0 +1,19 @@
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Real files and folders are served as they are (CSS, JS, uploads, admin/install.php).
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else goes to the front controller, which resolves the slug.
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Never serve dot-files, SQL or markdown sources.
+<FilesMatch "^\.|\.(sql|md|json\.example)$">
+    Require all denied
+</FilesMatch>
