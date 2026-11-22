@@ -69,3 +69,19 @@ foreach ($files as $file) {
 }
 
 out($ran ? "Done. $ran migration(s) applied." : 'Database is up to date.');
+
+// First admin account from config (email + password hash). Never overwrites an existing user.
+$admin = ve_config()['admin'] ?? null;
+if (!empty($admin['email']) && !empty($admin['password_hash'])) {
+    $exists = q('SELECT id FROM users WHERE email = ?', [$admin['email']])->fetchColumn();
+    if ($exists) {
+        out("Admin account {$admin['email']} already exists.");
+    } elseif (!password_get_info($admin['password_hash'])['algo']) {
+        out('Admin not created: config admin.password_hash is not a valid password_hash() value.');
+    } else {
+        q('INSERT INTO users (email, password_hash) VALUES (?, ?)', [$admin['email'], $admin['password_hash']]);
+        out("Admin account {$admin['email']} created.");
+    }
+} else {
+    out('No admin account in config/config.php (admin.email + admin.password_hash). Skipped.');
+}

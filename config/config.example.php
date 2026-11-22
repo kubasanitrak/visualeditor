@@ -7,6 +7,7 @@ return [
     'db' => [
         'driver'   => 'mysql',        // mysql (MySQL / MariaDB). pgsql later via PDO.
         'host'     => '127.0.0.1',    // MAMP: 127.0.0.1 (TCP). Live server: usually localhost.
+                                      // Tested targets: MAMP (MySQL), live PHP 8.4 + MariaDB 10.5.
         'port'     => 8889,           // MAMP default MySQL port. Live server: usually 3306.
         'socket'   => '',             // Optional, e.g. /Applications/MAMP/tmp/mysql/mysql.sock
         'name'     => 'your_database',
@@ -24,4 +25,12 @@ return [
     // Site-wide defaults used when the database has no value yet.
     'site_name' => 'My Portfolio',
     'lang'      => 'en',
+
+    // First admin account, created by admin/install.php if it does not exist yet.
+    // Store only a hash. Generate one with:
+    //   php -r "echo password_hash('your-password', PASSWORD_DEFAULT), PHP_EOL;"
+    'admin' => [
+        'email'         => 'you@example.com',
+        'password_hash' => '',
+    ],
 ];

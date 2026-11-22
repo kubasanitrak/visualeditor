@@ -31,10 +31,14 @@ uploads/               media (demo placeholders included)
 1. Start MAMP. Defaults assumed: Apache on **8888**, MySQL on **8889**, document root `/Users/kuba/Sites_MAMP`.
 2. In phpMyAdmin, create the database `visualeditor00_DB` with collation `utf8mb4_unicode_ci` (skip this if it already exists).
 3. Check `config/config.php`. It is set to `127.0.0.1:8889`, `root` / `root`.
-4. Open http://localhost:8888/visualeditor/admin/install.php to create the tables and the demo content.
+4. Open http://localhost:8888/visualeditor/admin/install.php to create the tables, the demo content and the first admin account (from `admin` in `config/config.php`, stored as a password hash only).
 5. Open http://localhost:8888/visualeditor/. You should see the demo portfolio page. http://localhost:8888/visualeditor/about tests slugs.
 
 Phase 0 gate: rename `admin/` to `_admin/`, reload, and the site still renders.
+
+## Live server
+
+Target: PHP 8.4, MariaDB 10.5, Apache with `mod_rewrite`. Copy `config/config.example.php` to `config/config.php` on the server and fill in the live database, `debug => false`, and the admin email + password hash.
 
 ## Data model
 
