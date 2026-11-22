@@ -26,6 +26,9 @@ return [
     'site_name' => 'My Portfolio',
     'lang'      => 'en',
 
+    // Largest upload per file in MB (PHP's own upload limits still apply).
+    'upload_max_mb' => 64,
+
     // First admin account, created by admin/install.php if it does not exist yet.
     // Store only a hash. Generate one with:
     //   php -r "echo password_hash('your-password', PASSWORD_DEFAULT), PHP_EOL;"

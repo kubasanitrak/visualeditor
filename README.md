@@ -2,7 +2,9 @@
 
 An edit-what-you-see content editor for simple portfolio sites. Plain PHP, vanilla JS and CSS, MySQL/MariaDB. No Node, no build step.
 
-Current state: **Phase 0, Foundation.** Pages render from the database. The editor itself (login, edit mode) arrives in Phase 1.
+Current state: **Phase 1, content editing.** Pages render from the database; a logged-in owner edits text, media, items and page settings in place.
+
+**Running, updating or deploying a site: see [docs/howto.md](docs/howto.md).** After every update, run the installer.
 
 ## Structure
 
@@ -25,6 +27,7 @@ admin/                 admin core: removable, updatable
   migrations/          NNN_name.sql, applied in order
 uploads/               media (demo placeholders included)
 docs/brief.md          project brief: scope, architecture, phases
+docs/howto.md          how to install, update, migrate and deploy
 CLAUDE.md              working notes for Claude Code
 ```
 
@@ -40,14 +43,14 @@ Phase 0 gate: rename `admin/` to `_admin/`, reload, and the site still renders.
 
 ## Live server
 
-Target: PHP 8.4, MariaDB 10.5, Apache with `mod_rewrite`. Copy `config/config.example.php` to `config/config.php` on the server and fill in the live database, `debug => false`, and the admin email + password hash.
+Target: PHP 8.4, MariaDB 10.5, Apache with `mod_rewrite`. First deploy, updates and moving content: [docs/howto.md](docs/howto.md#5-first-deploy-to-a-live-server).
 
 ## Data model
 
 - `pages`: slug, title, meta, OG image, page settings (JSON)
 - `items`: tree per page (`parent_id`, `sort`), `type`, `content` (JSON), `classes` (from the manifest), `settings` (JSON)
 - `components`: reusable masters; `items.component_id` links instances
-- `media`, `settings` (global, key -> JSON), `users`, `schema_migrations`
+- `media`, `settings` (global, key -> JSON), `users`, `redirects` (old slug -> page), `schema_migrations`
 
 Item types: `section`, `row`, `col` (containers) and `heading`, `text`, `image`, `video`.
 
@@ -58,4 +61,4 @@ Item types: `section`, `row`, `col` (containers) and `heading`, `text`, `image`,
 
 ## Adding a migration
 
-Create `admin/migrations/003_something.sql` and run `install.php` again. Applied migrations are skipped.
+See [docs/howto.md, section 8](docs/howto.md#8-writing-a-new-migration-developers). Every new migration gets a row in the migration log there.
