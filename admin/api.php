@@ -13,6 +13,9 @@
  *   POST ?action=item.delete           {id}
  *   GET  ?action=page.get&id=          page meta
  *   POST ?action=page.update           {id, title?, slug?, meta_description?, og_image_id?}
+ *   GET  ?action=page.list             all pages
+ *   POST ?action=page.create           {title}  -> page (slug made from the title)
+ *   POST ?action=page.delete           {id}     (not home / 404)
  */
 
 require dirname(__DIR__) . '/site/lib/render.php';
@@ -98,16 +101,7 @@ function ve_api_page_update(int $id, array $in): array
         $slug = strtolower(trim((string) $in['slug'], " /\t\n"));
         if ($slug !== $page['slug']) {
             if ($page['slug_locked']) ve_admin_fail('The address of this page cannot change.');
-            if (!preg_match('/^[a-z0-9][a-z0-9\/-]*$/', $slug) || str_contains($slug, '//') || strlen($slug) > 191) {
-                ve_admin_fail('Use lowercase letters, numbers and dashes, e.g. my-project.');
-            }
-            $top = explode('/', $slug)[0];
-            if (in_array($top, ['admin', 'site', 'uploads', 'config', 'docs', 'home', '404', 'index.php'], true)) {
-                ve_admin_fail("“{$slug}” is reserved. Choose another address.");
-            }
-            if (q('SELECT id FROM pages WHERE slug = ? AND id <> ?', [$slug, $id])->fetchColumn()) {
-                ve_admin_fail('Another page already uses this address.');
-            }
+            ve_api_check_slug($slug, $id);
             $set['slug'] = $slug;
         }
     }
@@ -122,8 +116,91 @@ function ve_api_page_update(int $id, array $in): array
     if ($set) {
         $cols = implode(', ', array_map(fn($k) => "`$k` = ?", array_keys($set)));
         q("UPDATE pages SET $cols WHERE id = ?", [...array_values($set), $id]);
+        if (isset($set['slug'])) {
+            // The old address keeps working; the new one belongs to this page now.
+            q('DELETE FROM redirects WHERE old_slug = ?', [$set['slug']]);
+            q('REPLACE INTO redirects (old_slug, page_id) VALUES (?, ?)', [$page['slug'], $id]);
+        }
     }
     return ve_api_page($id);
+}
+
+const VE_API_RESERVED = ['admin', 'site', 'uploads', 'config', 'docs', 'home', '404', 'index.php'];
+
+function ve_api_check_slug(string $slug, int $exceptId = 0): void
+{
+    if (!preg_match('/^[a-z0-9][a-z0-9\/-]*$/', $slug) || str_contains($slug, '//') || str_ends_with($slug, '/') || strlen($slug) > 191) {
+        ve_admin_fail('Use lowercase letters, numbers and dashes, e.g. my-project.');
+    }
+    if (in_array(explode('/', $slug)[0], VE_API_RESERVED, true)) {
+        ve_admin_fail("“{$slug}” is reserved. Choose another address.");
+    }
+    if (q('SELECT id FROM pages WHERE slug = ? AND id <> ?', [$slug, $exceptId])->fetchColumn()) {
+        ve_admin_fail('Another page already uses this address.');
+    }
+}
+
+/** "Moje Práce!" -> "moje-prace" */
+function ve_api_slugify(string $text): string
+{
+    if (class_exists('Transliterator') && ($t = Transliterator::create('Any-Latin; Latin-ASCII'))) {
+        $text = (string) $t->transliterate($text);
+    } elseif (function_exists('iconv')) {
+        $text = (string) @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+    }
+    $slug = trim(preg_replace('/[^a-z0-9]+/', '-', strtolower($text)), '-');
+    return substr($slug, 0, 80) ?: 'page';
+}
+
+function ve_api_page_list(): array
+{
+    return array_map(fn($p) => [
+        'id'     => (int) $p['id'],
+        'title'  => $p['title'],
+        'slug'   => $p['slug'],
+        'url'    => ve_url($p['slug'] === 'home' ? '' : $p['slug']),
+        'locked' => in_array($p['slug'], ['home', '404'], true),
+    ], q("SELECT id, title, slug FROM pages ORDER BY slug = 'home' DESC, slug = '404', sort, title")->fetchAll());
+}
+
+/** New page with an empty section and the title as its heading. */
+function ve_api_page_create(array $in): array
+{
+    $title = mb_substr(trim(strip_tags((string) ($in['title'] ?? ''))), 0, 255);
+    if ($title === '') ve_admin_fail('Give the page a title.');
+
+    $base = ve_api_slugify($title);
+    if (in_array($base, VE_API_RESERVED, true)) $base .= '-page';
+    $slug = $base;
+    for ($n = 2; q('SELECT id FROM pages WHERE slug = ?', [$slug])->fetchColumn(); $n++) {
+        $slug = $base . '-' . $n;
+    }
+    ve_api_check_slug($slug);
+
+    $pdo = db();
+    $pdo->beginTransaction();
+    try {
+        $sort = (int) q('SELECT COALESCE(MAX(sort), 0) + 10 FROM pages')->fetchColumn();
+        q('INSERT INTO pages (slug, title, settings, sort) VALUES (?, ?, ?, ?)', [$slug, $title, '{}', $sort]);
+        $id = (int) $pdo->lastInsertId();
+        q('DELETE FROM redirects WHERE old_slug = ?', [$slug]);
+        ve_admin_insert_tree($id, null, 10, [
+            'type' => 'section',
+            'children' => [['type' => 'heading', 'content' => ['text' => $title, 'level' => 1], 'classes' => 'type-h1']],
+        ]);
+        $pdo->commit();
+    } catch (Throwable $ex) {
+        $pdo->rollBack();
+        throw $ex;
+    }
+    return ve_api_page($id);
+}
+
+function ve_api_page_delete(int $id): void
+{
+    $page = ve_api_page($id);
+    if ($page['slug_locked']) ve_admin_fail('This page cannot be deleted.');
+    q('DELETE FROM pages WHERE id = ?', [$id]); // items and redirects go with it
 }
 
 try {
@@ -179,6 +256,16 @@ try {
 
         case 'POST page.update':
             ve_api_out(['page' => ve_api_page_update($id, $in)]);
+
+        case 'GET page.list':
+            ve_api_out(['pages' => ve_api_page_list()]);
+
+        case 'POST page.create':
+            ve_api_out(['page' => ve_api_page_create($in)]);
+
+        case 'POST page.delete':
+            ve_api_page_delete($id);
+            ve_api_out(['ok' => true, 'home' => ve_url('')]);
 
         default:
             ve_api_out(['error' => 'Unknown action.'], 404);

@@ -80,6 +80,18 @@ function ve_get_page(string $slug): ?array
     return $page;
 }
 
+/** Current slug of a page that used to live at $oldSlug, or null. */
+function ve_redirect_target(string $oldSlug): ?string
+{
+    try {
+        $slug = q('SELECT p.slug FROM redirects r JOIN pages p ON p.id = r.page_id
+                   WHERE r.old_slug = ? AND p.status = "published" LIMIT 1', [$oldSlug])->fetchColumn();
+    } catch (PDOException) {
+        return null; // redirects table not created yet (migration 003)
+    }
+    return $slug !== false && $slug !== $oldSlug ? $slug : null;
+}
+
 /** All items of a page, as a tree ordered by sort. */
 function ve_get_items(int $pageId): array
 {

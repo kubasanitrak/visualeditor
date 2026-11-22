@@ -36,7 +36,7 @@ Rendered items carry `data-ve-id` and `data-ve-type`; the editor should find ite
 
 ## Data
 
-Tables: `pages`, `items` (tree via `parent_id` + `sort`; `content`/`settings` are JSON in LONGTEXT; `classes` = space-separated manifest classes), `components`, `media`, `settings` (key -> JSON), `users`, `schema_migrations`.
+Tables: `pages`, `items` (tree via `parent_id` + `sort`; `content`/`settings` are JSON in LONGTEXT; `classes` = space-separated manifest classes), `components`, `media`, `settings` (key -> JSON), `users`, `redirects` (old slug -> page, 301 after a slug change), `schema_migrations`.
 
 - Schema changes = a new `admin/migrations/NNN_name.sql`; never edit an applied migration. Run the installer to apply.
 - In SQL seeds, avoid double quotes inside JSON string values (an escaped `\"` in a SQL literal breaks the JSON). Use unquoted HTML attributes or JSON-encode in PHP instead.

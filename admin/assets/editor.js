@@ -236,6 +236,9 @@ function renderItembar() {
         type === 'image' || type === 'video'
             ? el('button.ve-admin-btn', { type: 'button', onclick: () => replaceMedia(selected) }, icon(type), el('span', {}, 'Replace'))
             : null,
+        type === 'image'
+            ? el('button.ve-admin-btn', { type: 'button', title: 'Describe the image for screen readers and search engines', onclick: e => openAltEditor(e.currentTarget) }, 'Alt')
+            : null,
         iconButton('plus', 'Add after this', e => openAddMenu(e.currentTarget)),
         iconButton('copy', 'Duplicate', duplicateSelected),
         iconButton('trash', 'Delete', deleteSelected, 've-admin-danger'),
@@ -292,10 +295,11 @@ function insertPlaced({ html: markup, parent_id, after_id }) {
 
 function replaceItem(old, markup) {
     const node = fromHTML(markup);
+    const wasSelected = selected === old;
     old.replaceWith(node);
     reveal(node);
     if (editing) enhance(node);
-    select(node);
+    if (wasSelected) select(node);
 }
 
 function addComponent(c) {
@@ -360,6 +364,39 @@ function openAddMenu(anchor) {
     menu.querySelector('button:not([disabled])')?.focus();
 }
 
+/** Small popover to edit an image's alt text. Saves on Enter or when it closes. */
+function openAltEditor(anchor) {
+    if (menu && menuAnchor === anchor) { closeMenu(); return; }
+    closeMenu();
+    const item = selected;
+    const current = item.querySelector('img')?.getAttribute('alt') ?? '';
+    const input = el('input.ve-admin-alt-input', { type: 'text', value: current, maxlength: 255, placeholder: 'e.g. Red chair in a sunny studio', 'aria-label': 'Alt text' });
+    const save = () => {
+        const value = input.value.trim();
+        if (value === current) return;
+        queue(() => api('item.update', { body: { id: Number(item.dataset.veId), content: { alt: value } } }))
+            .then(data => { if (item.isConnected) replaceItem(item, data.html); }, () => {});
+    };
+    menuAnchor = anchor;
+    menu = el('form.ve-admin-ui.ve-admin-menu.ve-admin-alt', {
+        onsubmit: e => { e.preventDefault(); closeMenu(); },
+    },
+        el('label.ve-admin-menu-hint', {}, 'Alt text: what the image shows, for screen readers and search engines. Leave empty to use the text saved with the file.'),
+        input,
+    );
+    menu._onclose = save;
+    input.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        e.stopPropagation();
+        menu._onclose = null; // Escape cancels
+        closeMenu();
+    });
+    document.body.append(menu);
+    positionMenu();
+    input.focus();
+    input.select();
+}
+
 function positionMenu() {
     if (!menu || !menuAnchor) return;
     const r = menuAnchor.getBoundingClientRect();
@@ -372,8 +409,10 @@ function positionMenu() {
 }
 
 function closeMenu() {
-    menu?.remove();
+    const m = menu;
     menu = menuAnchor = null;
+    m?.remove();
+    m?._onclose?.();
 }
 
 document.addEventListener('pointerdown', e => {

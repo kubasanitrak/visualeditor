@@ -253,7 +253,11 @@ function ve_admin_update_content(int $id, array $patch): array
                 $content['media_id'] = $mediaId;
             }
             if (array_key_exists('caption', $patch)) $content['caption'] = $str($patch['caption'], 500);
-            if (array_key_exists('alt', $patch))     $content['alt'] = $str($patch['alt'], 255);
+            if (array_key_exists('alt', $patch)) {
+                $alt = $str($patch['alt'], 255);
+                // Empty = fall back to the alt text stored with the media file.
+                if ($alt === '') unset($content['alt']); else $content['alt'] = $alt;
+            }
             break;
         default:
             ve_admin_fail('This item has no editable content.');

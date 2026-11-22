@@ -31,7 +31,15 @@ if (is_file($adminBootstrap)) {
 }
 
 try {
-    $page = preg_match('/^[a-z0-9][a-z0-9\/-]*$/', $slug) ? ve_get_page($slug) : null;
+    $validSlug = (bool) preg_match('/^[a-z0-9][a-z0-9\/-]*$/', $slug);
+    $page = $validSlug ? ve_get_page($slug) : null;
+    // A renamed page: send visitors (and old links) to its current address.
+    if (!$page && $validSlug && ($target = ve_redirect_target($slug))) {
+        $query = $_SERVER['QUERY_STRING'] ?? '';
+        header('Cache-Control: max-age=3600'); // short cache, so renaming a page back cannot loop
+        header('Location: ' . ve_url($target === 'home' ? '' : $target) . ($query !== '' ? '?' . $query : ''), true, 301);
+        exit;
+    }
 } catch (PDOException $ex) {
     http_response_code(500);
     echo !empty($config['debug'])

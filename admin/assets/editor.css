@@ -231,3 +231,25 @@ html:not(.ve-admin-editing) figcaption.ve-admin-ghost { display: none; }
 .ve-admin-login label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
 .ve-admin-login .ve-admin-btn { justify-content: center; height: 38px; }
 .ve-admin-login a { text-align: center; font-size: 12px; }
+
+/* ---------- pages list, new page, alt text ---------- */
+.ve-admin-rule { border: 0; border-top: 1px solid var(--ve-admin-line); margin: 4px 0; width: 100%; }
+.ve-admin-btn-quiet-danger { align-self: flex-start; color: var(--ve-admin-danger); padding-left: 6px; }
+.ve-admin-btn-quiet-danger:hover { background: rgba(210, 45, 45, .08); }
+.ve-admin-pages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.ve-admin-pages a {
+    display: flex; justify-content: space-between; gap: 12px; align-items: baseline;
+    padding: 7px 8px; border-radius: 6px; color: inherit; text-decoration: none;
+}
+.ve-admin-pages a:hover { background: var(--ve-admin-hover); }
+.ve-admin-pages a[aria-current=page] { background: var(--ve-admin-hover); font-weight: 600; }
+.ve-admin-pages small { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ve-admin-new-page { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.ve-admin-row { display: flex; gap: 6px; align-items: center; }
+.ve-admin-row input { flex: 1; min-width: 0; height: 32px; }
+.ve-admin-alt { padding: 8px; gap: 6px; width: 300px; }
+.ve-admin-alt-input {
+    width: 100%; height: 32px; padding: 6px 10px; border: 1px solid var(--ve-admin-line);
+    border-radius: 6px; background: #fff; color: var(--ve-admin-ink);
+}
+.ve-admin-alt-input:focus { outline: 2px solid var(--ve-admin-accent); outline-offset: -1px; border-color: transparent; }
