@@ -7,7 +7,7 @@ An edit-what-you-see content editor add-on for simple portfolio websites. **Read
 - **Phase 0 (Foundation): done.** Pages render from the DB; style library v1 + manifest; migrations runner; demo seed; first admin account created by the installer.
 - **Phase 1 (Content editing MVP): done.** Login at `/admin/` (email + password, session cookie `ve_admin`), `admin/bootstrap.php` injects the editor only for a logged-in owner, `admin/api.php` JSON API (CSRF header `X-VE-CSRF`), editor in `admin/assets/` (ES modules, no build). Component presets live in `site/components.json`.
 - **Phase 2 (Styling from predefined classes): built, gate pending** (restyle a page fully without editing CSS). Item Style panel, page style in the Page panel, Site panel for the global theme; all pickers come from `site/styles.manifest.json` (`groups` with `applies`, plus `theme.palette` and `theme.options`). Colours are stored as palette tokens (`"bg": "accent"` -> `var(--color-accent)`); the theme lives in `settings.theme` as `{mode, vars, dark}` and is rendered by `ve_theme_css()`. Server-side checks in `admin/lib/styles.php`.
-- Phase 3 (layout & components) is next after the Phase 2 gate.
+- After the Phase 2 gate: **Phase 2b** (header, footer & navigation: fixed templates with editable slots, data in `settings`), then **Phase 2c** (typography + button tokens, fonts, Figma variables JSON import), then Phase 3 (layout & components). Details in `docs/brief.md`.
 
 ## Hard constraints
 

@@ -221,6 +221,10 @@ alt="roadmap · 5 phases, a gate after each" />
 
 roadmap · 5 phases, a gate after each
 
+Phases 2b (header, footer & navigation) and 2c (design tokens & Figma
+import) were added after kick-off, between Phase 2 and Phase 3; the
+roadmap image predates them.
+
 ### Phase 0: Foundation
 
 - [ ] Local setup as above: MAMP, DB, folder structure, config, PDO
@@ -274,6 +278,73 @@ touching code. *Passed (Nov 23, 2026).*
 
 **Gate:** a page can be fully restyled without editing CSS.
 
+### Phase 2b: Header, footer & navigation
+
+Fixed header and footer templates with editable slots; styling only
+from manifest options. Free-form header/footer layouts come later as
+reusable components in Phase 3.
+
+- [ ] Data in `settings` (no new table): `nav` with three menus (`top`,
+  `footer`, `social`), plus `header` and `footer` (logo, site title,
+  tagline, footer text). Menu links point to a page **by id** (slug
+  changes never break a menu), an external URL or an anchor. Social
+  links = network + URL, icons from a small SVG set in
+  `site/icons/social/`.
+
+- [ ] `site/templates/header.php` and `footer.php`, included by
+  `layout.php`; fall back to the site name when settings are missing,
+  so the site works without `admin/` or the migration.
+
+- [ ] Logo as SVG, inlined so it follows `currentColor` and blend
+  modes; SVG sanitised on upload (no scripts, `on*` attributes,
+  `foreignObject` or external references).
+
+- [ ] Editor: Navigation tab in the Site panel (add, reorder, remove
+  links, page picker); inline editing of site title and tagline;
+  "Show in menu" option when creating a page.
+
+- [ ] Styling via manifest groups (`applies: header / footer`):
+  background and text colour (palette tokens), blend mode, position
+  (static, sticky, fixed, overlay on first section), layout variant
+  (logo left/nav right, centred), collapse breakpoint for the burger
+  menu (never, tablet, mobile).
+
+- [ ] Burger menu toggle in `site/js/site.js` (no admin dependency).
+
+- [ ] Page-level option: hide header and/or footer on a page.
+
+**Gate:** the owner changes the logo, all three menus, header colours,
+blend mode and mobile behaviour, and hides the header on one page,
+without editing code; removing `admin/` leaves the header and footer
+working.
+
+### Phase 2c: Design tokens & Figma import
+
+- [ ] Extend the theme model: typography for headlines (h1–h6) and
+  paragraphs (font family, size, weight, line height, letter spacing,
+  colour token), rendered as CSS variables by `ve_theme_css()` and
+  used in `library.css`.
+
+- [ ] Button tokens: border, radius, background, text and focus colour,
+  hover state. Other form elements (inputs, radios, checkboxes) wait
+  until a form item type exists.
+
+- [ ] Fonts: self-hosted woff2 upload generating `@font-face`
+  (preferred, GDPR-friendly), or a Google Fonts URL.
+
+- [ ] Token import: Figma variables exported to JSON with an
+  export-variables plugin; a PHP importer maps the JSON to
+  `settings.theme`. First as a command
+  (`php admin/tools/import-tokens.php tokens.json`), later as an admin
+  upload that previews the changes before applying.
+
+- [ ] Starter Figma file convention: variable collections named like
+  the tokens (`color/*`, `type/h1/*`, `button/*`), so the import maps
+  1:1. Document it in `docs/howto.md`.
+
+**Gate:** importing a designer's Figma variables export restyles
+colours, typography and buttons across the whole site.
+
 ### Phase 3: Layout & components
 
 - [ ] Drag to reposition; layers panel for sorting
@@ -285,6 +356,9 @@ touching code. *Passed (Nov 23, 2026).*
 - [ ] Extended motion: scroll reveal, parallax items, fullscreen slider
 
 - [ ] Responsive checks with container queries; preview at breakpoints
+
+- [ ] Free-form header/footer layouts built from reusable components
+  (beyond the fixed templates of Phase 2b)
 
 **Gate:** a new page is built from components alone.
 
