@@ -3,6 +3,7 @@
 
 import { api, config, el, icon, toast, confirmDialog, drawer } from './util.js';
 import { openTray } from './tray.js';
+import { styleConfig, section, groupChips, swatches } from './style.js';
 
 /** "Moje Práce" -> "moje-prace" (the server checks the result again). */
 const slugify = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase()
@@ -12,12 +13,13 @@ export async function openPagePanel(pageId) {
     const d = drawer('Page');
     d.body.append(el('p.ve-admin-muted', {}, 'Loading…'));
 
-    let page, pages;
+    let page, pages, cfg;
     let renderList = () => {};
     try {
-        [page, pages] = await Promise.all([
+        [page, pages, cfg] = await Promise.all([
             api('page.get', { params: { id: pageId } }).then(r => r.page),
             api('page.list').then(r => r.pages),
+            styleConfig(),
         ]);
     } catch (e) {
         d.body.replaceChildren(el('p.ve-admin-error', {}, e.message));
@@ -76,6 +78,32 @@ export async function openPagePanel(pageId) {
     };
     renderOg();
 
+    /* ---------- page style (manifest groups for 'page' + palette) ---------- */
+
+    const styleBox = el('div.ve-admin-page-style');
+    const restyle = async patch => {
+        try {
+            const r = await api('page.style', { body: { id: pageId, ...patch } });
+            page = r.page;
+            document.body.className = r.body.class;
+            if (r.body.style) document.body.setAttribute('style', r.body.style); else document.body.removeAttribute('style');
+            toast('Saved');
+        } catch (e) { toast(e.message, 'error'); }
+        renderStyle();
+    };
+    const renderStyle = () => {
+        const s = page.settings || {};
+        const classes = new Set(String(s.classes || '').split(/\s+/).filter(Boolean));
+        if (s.full_width) classes.add('page-full');
+        styleBox.replaceChildren(
+            ...cfg.groups.filter(g => g.applies.includes('page')).map(g =>
+                section(g.label, groupChips(g, classes, next => restyle({ classes: [...next].join(' ') })))),
+            section('Page background', swatches('Page background', cfg.palette, s.bg, v => restyle({ bg: v }), 'Site default')),
+            section('Page text colour', swatches('Page text colour', cfg.palette, s.color, v => restyle({ color: v }), 'Site default')),
+        );
+    };
+    renderStyle();
+
     const deleteBtn = page.slug_locked ? null : el('button.ve-admin-btn.ve-admin-btn-quiet-danger', {
         type: 'button',
         onclick: async () => {
@@ -124,6 +152,9 @@ export async function openPagePanel(pageId) {
         field('Address', slug, page.slug_locked ? 'The address of this page is fixed.' : `${base}/${page.slug}`),
         field('Description', desc, 'Short summary for search engines and link previews.'),
         el('div.ve-admin-field', {}, el('span', {}, 'Social share image'), ogBox, el('small.ve-admin-muted', {}, 'Used when the page is shared. About 1200 × 630 works best.')),
+        el('hr.ve-admin-rule'),
+        styleBox,
+        deleteBtn ? el('hr.ve-admin-rule') : null,
         deleteBtn,
         el('hr.ve-admin-rule'),
         el('div.ve-admin-field', {}, el('span', {}, 'All pages'), list, newForm),

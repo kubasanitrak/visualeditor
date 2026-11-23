@@ -13,6 +13,11 @@
  *   POST ?action=item.delete           {id}
  *   GET  ?action=page.get&id=          page meta
  *   POST ?action=page.update           {id, title?, slug?, meta_description?, og_image_id?}
+ *   GET  ?action=item.get&id=          item data for the style panel
+ *   POST ?action=item.style            {id, classes?, settings?: {bg?, color?}} -> {html, item}
+ *   POST ?action=page.style            {id, classes?, bg?, color?} -> {body: {class, style}}
+ *   GET  ?action=style.config          manifest groups, palette, options + current theme
+ *   POST ?action=theme.update          {mode?, colors?: {token: {light?, dark?}}, options?: {var: value}} -> {css, mode}
  *   GET  ?action=page.list             all pages
  *   POST ?action=page.create           {title}  -> page (slug made from the title)
  *   POST ?action=page.delete           {id}     (not home / 404)
@@ -22,6 +27,7 @@ require dirname(__DIR__) . '/site/lib/render.php';
 require __DIR__ . '/lib/auth.php';
 require __DIR__ . '/lib/items.php';
 require __DIR__ . '/lib/media.php';
+require __DIR__ . '/lib/styles.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -66,6 +72,25 @@ function ve_api_placed(int $newId): array
     ];
 }
 
+/** Item data for the style panel. */
+function ve_api_item(int $id): array
+{
+    $item = ve_admin_item($id);
+    $media = null;
+    if (!empty($item['content']['media_id'])) {
+        $m = q('SELECT * FROM media WHERE id = ?', [(int) $item['content']['media_id']])->fetch();
+        $media = $m ? ve_admin_media_out($m) : null;
+    }
+    return [
+        'id'       => (int) $item['id'],
+        'type'     => $item['type'],
+        'classes'  => $item['classes'],
+        'settings' => (object) $item['settings'],
+        'content'  => (object) $item['content'],
+        'media'    => $media,
+    ];
+}
+
 function ve_api_page(int $id): array
 {
     $page = q('SELECT id, slug, title, meta_description, og_image_id, status FROM pages WHERE id = ?', [$id])->fetch();
@@ -81,6 +106,7 @@ function ve_api_page(int $id): array
         'slug_locked'      => in_array($page['slug'], ['home', '404'], true),
         'url'              => ve_url($page['slug'] === 'home' ? '' : $page['slug']),
         'og'               => $og ? ve_admin_media_out($og) : null,
+        'settings'         => (object) ve_json(q('SELECT settings FROM pages WHERE id = ?', [$id])->fetchColumn() ?: null),
     ];
 }
 
@@ -256,6 +282,32 @@ try {
 
         case 'POST page.update':
             ve_api_out(['page' => ve_api_page_update($id, $in)]);
+
+        case 'GET item.get':
+            ve_api_out(['item' => ve_api_item($id)]);
+
+        case 'POST item.style':
+            ve_admin_style_item($id, $in);
+            ve_api_out(['html' => ve_admin_render($id), 'item' => ve_api_item($id)]);
+
+        case 'POST page.style':
+            ve_admin_style_page($id, $in);
+            $page = q('SELECT * FROM pages WHERE id = ?', [$id])->fetch();
+            $page['settings'] = ve_json($page['settings']);
+            ve_api_out(['body' => ve_page_body($page), 'page' => ve_api_page($id)]);
+
+        case 'GET style.config':
+            $m = ve_admin_manifest();
+            ve_api_out([
+                'groups'  => $m['groups'],
+                'palette' => $m['theme']['palette'],
+                'options' => $m['theme']['options'],
+                'theme'   => ve_admin_theme_values(ve_admin_theme()),
+            ]);
+
+        case 'POST theme.update':
+            $theme = ve_admin_update_theme($in);
+            ve_api_out(['css' => ve_theme_css($theme), 'mode' => $theme['mode'], 'theme' => ve_admin_theme_values($theme)]);
 
         case 'GET page.list':
             ve_api_out(['pages' => ve_api_page_list()]);

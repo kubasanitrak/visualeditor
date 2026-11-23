@@ -252,6 +252,13 @@ function ve_admin_update_content(int $id, array $patch): array
                 }
                 $content['media_id'] = $mediaId;
             }
+            if (array_key_exists('focal', $patch)) {
+                // "x% y%": which part of the media stays visible when it is cropped (fit: cover)
+                $focal = $patch['focal'];
+                if ($focal === null || $focal === '') unset($content['focal']);
+                elseif (is_string($focal) && preg_match('/^(\d{1,3})% (\d{1,3})%$/', $focal, $m) && $m[1] <= 100 && $m[2] <= 100) $content['focal'] = $focal;
+                else ve_admin_fail('Invalid focal point.');
+            }
             if (array_key_exists('caption', $patch)) $content['caption'] = $str($patch['caption'], 500);
             if (array_key_exists('alt', $patch)) {
                 $alt = $str($patch['alt'], 255);
@@ -282,8 +289,7 @@ function ve_admin_filter_classes(string $classes): string
     static $known = null;
     if ($known === null) {
         $known = [];
-        $manifest = json_decode((string) @file_get_contents(dirname(__DIR__, 2) . '/site/styles.manifest.json'), true);
-        foreach ($manifest['groups'] ?? [] as $group) {
+        foreach (ve_admin_manifest()['groups'] as $group) {
             foreach ($group['classes'] ?? [] as $c) {
                 $known[$c['class']] = true;
             }

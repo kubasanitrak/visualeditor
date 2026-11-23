@@ -10,6 +10,8 @@
     --color-muted: #6b6b6b;
     --color-accent: #2f5bff;
     --color-line: rgba(0, 0, 0, .12);
+    --color-light: #f6f5f2;
+    --color-dark: #161616;
 
     /* shape */
     --radius-media: 0px;

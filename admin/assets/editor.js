@@ -4,6 +4,7 @@
 import { api, config, el, icon, iconButton, fromHTML, toast, confirmDialog } from './js/util.js';
 import { openTray } from './js/tray.js';
 import { openPagePanel } from './js/page.js';
+import { openItemStyle, openSitePanel } from './js/style.js';
 
 const html = document.documentElement;
 const main = document.querySelector('.ve-main') || document.body;
@@ -55,6 +56,7 @@ const bar = el('div.ve-admin-ui.ve-admin-bar', { role: 'toolbar', 'aria-label': 
         addBtn,
         el('button.ve-admin-btn', { type: 'button', onclick: () => openTray() }, icon('image'), el('span', {}, 'Media')),
         el('button.ve-admin-btn', { type: 'button', onclick: () => openPagePanel(pageId) }, icon('page'), el('span', {}, 'Page')),
+        el('button.ve-admin-btn', { type: 'button', title: 'Colours, dark mode, corners and animation speed for the whole site', onclick: () => openSitePanel() }, icon('site'), el('span', {}, 'Site')),
         stateEl,
     ),
     iconButton('logout', `Log out (${config.user})`, logout),
@@ -239,6 +241,7 @@ function renderItembar() {
         type === 'image'
             ? el('button.ve-admin-btn', { type: 'button', title: 'Describe the image for screen readers and search engines', onclick: e => openAltEditor(e.currentTarget) }, 'Alt')
             : null,
+        el('button.ve-admin-btn', { type: 'button', title: 'Style: colours, layout, animation', onclick: () => openStyle(selected) }, icon('style'), el('span', {}, 'Style')),
         iconButton('plus', 'Add after this', e => openAddMenu(e.currentTarget)),
         iconButton('copy', 'Duplicate', duplicateSelected),
         iconButton('trash', 'Delete', deleteSelected, 've-admin-danger'),
@@ -335,6 +338,35 @@ function replaceMedia(item) {
         onPick: m => queue(() => api('item.update', { body: { id: Number(item.dataset.veId), content: { media_id: m.id } } }))
             .then(data => replaceItem(item, data.html), () => {}),
     });
+}
+
+/* ---------- style panel ---------- */
+
+function openStyle(item) {
+    const id = Number(item.dataset.veId);
+    openItemStyle(id, {
+        run: queue,
+        rendered: (markup, group) => {
+            const current = find(id);
+            if (!current) return;
+            const keep = selected === current;
+            replaceItem(current, markup);
+            if (keep) select(find(id));
+            if (group && (group.id === 'animation' || group.id === 'delay')) previewAnimation(find(id));
+        },
+        preview: () => previewAnimation(find(id)),
+    });
+}
+
+/** Replay an item's entrance animation (edit mode normally shows items fully visible). */
+function previewAnimation(node) {
+    if (!node || !/\banim-/.test(node.className)) return;
+    node.classList.add('ve-admin-anim-preview');
+    node.classList.remove('is-visible');
+    void node.offsetWidth; // restart the transition
+    requestAnimationFrame(() => requestAnimationFrame(() => node.classList.add('is-visible')));
+    clearTimeout(node._veAdminAnim);
+    node._veAdminAnim = setTimeout(() => node.classList.remove('ve-admin-anim-preview'), 2500);
 }
 
 /* ---------- add menu (component library) ---------- */

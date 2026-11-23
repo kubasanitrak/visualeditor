@@ -4,17 +4,9 @@ $config   = ve_config();
 $siteName = $settings['site_name'] ?? $config['site_name'] ?? '';
 $title    = $page['title'] . ($siteName ? ' – ' . $siteName : '');
 $theme    = $settings['theme'] ?? [];
-$ps       = $page['settings'];
-
-// Global settings become CSS custom properties, so one change restyles the whole site.
-$vars = [];
-foreach (($theme['vars'] ?? []) as $name => $value) {
-    if (preg_match('/^[a-z0-9-]+$/', $name)) {
-        $vars[] = '--' . $name . ':' . preg_replace('/[^#a-zA-Z0-9(),.% -]/', '', (string) $value);
-    }
-}
-$pageClasses = ve_classes(trim(($ps['classes'] ?? '') . ' ' . (!empty($ps['full_width']) ? 'page-full' : '')));
-$mode = in_array($theme['mode'] ?? '', ['light', 'dark', 'auto'], true) ? $theme['mode'] : 'auto';
+$mode     = ve_theme_mode($theme);
+$themeCss = ve_theme_css($theme); // global settings as CSS variables: one change restyles the whole site
+$bodyAttr = ve_page_body($page);
 ?>
 <!DOCTYPE html>
 <html lang="<?= e($config['lang'] ?? 'en') ?>" data-theme="<?= e($mode) ?>" class="no-js">
@@ -32,11 +24,9 @@ $mode = in_array($theme['mode'] ?? '', ['light', 'dark', 'auto'], true) ? $theme
     <?php endif; ?>
     <link rel="stylesheet" href="<?= e(ve_url('site/css/base.css')) ?>">
     <link rel="stylesheet" href="<?= e(ve_url('site/css/library.css')) ?>">
-    <?php if ($vars): ?>
-    <style>:root{<?= implode(';', $vars) ?>}</style>
-    <?php endif; ?>
+    <style id="ve-theme"><?= $themeCss ?></style>
 </head>
-<body class="ve-page <?= e($pageClasses) ?>" data-ve-page="<?= (int) $page['id'] ?>">
+<body class="<?= e($bodyAttr['class']) ?>"<?= $bodyAttr['style'] !== '' ? ' style="' . e($bodyAttr['style']) . '"' : '' ?> data-ve-page="<?= (int) $page['id'] ?>">
 <main class="ve-main">
 <?= $body ?>
 </main>

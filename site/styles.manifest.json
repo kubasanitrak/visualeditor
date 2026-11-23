@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Registry of predefined style classes. The editor builds its pickers from this file. Each class must exist in site/css/library.css. 'applies' lists the item types a class is offered for; 'exclusive' means only one class from the group at a time.",
+  "note": "Registry of predefined styles. The editor builds every picker from this file. Each class must exist in site/css/library.css. 'applies' lists the item types a group is offered for ('page' = page settings); 'exclusive' means only one class from the group at a time. 'theme' defines the global settings: the colour palette (token -> --color-<token>; 'dark' marks colours that change in dark mode) and options that set one CSS variable from a fixed list of choices.",
   "groups": [
     {
       "id": "section-space",
@@ -53,6 +53,17 @@
       "classes": [
         { "class": "span-2", "label": "Span 2" },
         { "class": "span-full", "label": "Full row" }
+      ]
+    },
+    {
+      "id": "width",
+      "label": "Width",
+      "applies": ["row", "heading", "text", "image", "video"],
+      "exclusive": true,
+      "classes": [
+        { "class": "w-1-3", "label": "1/3" },
+        { "class": "w-1-2", "label": "1/2" },
+        { "class": "w-2-3", "label": "2/3" }
       ]
     },
     {
@@ -138,6 +149,72 @@
         { "class": "delay-2", "label": "Medium" },
         { "class": "delay-3", "label": "Long" }
       ]
+    },
+    {
+      "id": "page-width",
+      "label": "Page width",
+      "applies": ["page"],
+      "exclusive": true,
+      "classes": [
+        { "class": "page-narrow", "label": "Narrow" },
+        { "class": "page-wide", "label": "Wide" },
+        { "class": "page-full", "label": "Full width" }
+      ]
+    },
+    {
+      "id": "page-spacing",
+      "label": "Section spacing",
+      "applies": ["page"],
+      "exclusive": true,
+      "classes": [
+        { "class": "page-compact", "label": "Compact" },
+        { "class": "page-airy", "label": "Airy" }
+      ]
     }
-  ]
+  ],
+  "theme": {
+    "palette": [
+      { "token": "bg", "label": "Background", "light": "#f6f5f2", "dark": "#111111" },
+      { "token": "text", "label": "Text", "light": "#161616", "dark": "#ececec" },
+      { "token": "muted", "label": "Muted text", "light": "#6b6b6b", "dark": "#9a9a9a" },
+      { "token": "accent", "label": "Accent", "light": "#2f5bff" },
+      { "token": "light", "label": "Light", "light": "#f6f5f2" },
+      { "token": "dark", "label": "Dark", "light": "#161616" }
+    ],
+    "options": [
+      {
+        "var": "anim-duration", "label": "Animation speed", "default": "700ms",
+        "choices": [
+          { "value": "400ms", "label": "Fast" },
+          { "value": "700ms", "label": "Normal" },
+          { "value": "1100ms", "label": "Slow" }
+        ]
+      },
+      {
+        "var": "radius-media", "label": "Image corners", "default": "0px",
+        "choices": [
+          { "value": "0px", "label": "Square" },
+          { "value": "4px", "label": "Small" },
+          { "value": "12px", "label": "Medium" },
+          { "value": "28px", "label": "Large" }
+        ]
+      },
+      {
+        "var": "radius-button", "label": "Button corners", "default": "999px",
+        "choices": [
+          { "value": "0px", "label": "Square" },
+          { "value": "6px", "label": "Small" },
+          { "value": "999px", "label": "Round" }
+        ]
+      },
+      {
+        "var": "radius-input", "label": "Form field corners", "default": "6px",
+        "choices": [
+          { "value": "0px", "label": "Square" },
+          { "value": "6px", "label": "Small" },
+          { "value": "12px", "label": "Medium" }
+        ]
+      }
+    ]
+  }
 }

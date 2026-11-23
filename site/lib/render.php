@@ -47,6 +47,22 @@ function ve_classes(?string $classes): string
     return implode(' ', array_unique($safe));
 }
 
+/** Colour setting -> CSS value. Palette tokens ("accent") become var(--color-accent). */
+function ve_color(?string $value): string
+{
+    $value = trim((string) $value);
+    if (preg_match('/^[a-z][a-z0-9-]*$/', $value)) {
+        return 'var(--color-' . $value . ')';
+    }
+    return preg_replace('/[^#a-zA-Z0-9(),.% -]/', '', $value);
+}
+
+/** Plain CSS value from settings (no braces, semicolons or quotes). */
+function ve_css_value(string $value): string
+{
+    return preg_replace('/[^#a-zA-Z0-9(),.% -]/', '', $value);
+}
+
 function ve_json(?string $json): array
 {
     if ($json === null || $json === '') {
@@ -156,8 +172,12 @@ function ve_render_item(array $item): string
 
     $s = $item['settings'];
     $style = [];
-    if (!empty($s['bg']))     $style[] = '--item-bg:' . preg_replace('/[^#a-zA-Z0-9(),.% -]/', '', $s['bg']);
-    if (!empty($s['color']))  $style[] = '--item-color:' . preg_replace('/[^#a-zA-Z0-9(),.% -]/', '', $s['color']);
+    $classes = (string) $item['classes'];
+    if (!empty($s['bg'])) {
+        $style[] = '--item-bg:' . ve_color($s['bg']);
+        $classes .= ' has-bg';
+    }
+    if (!empty($s['color']))  $style[] = '--item-color:' . ve_color($s['color']);
     if (!empty($s['width']))  $style[] = '--item-width:' . preg_replace('/[^a-z0-9.%]/', '', $s['width']);
 
     return ve_template('items/' . $type, [
@@ -170,10 +190,52 @@ function ve_render_item(array $item): string
             $item['id'],
             e($type),
             e($type),
-            e(ve_classes($item['classes'])),
+            e(ve_classes($classes)),
             $style ? ' style="' . e(implode(';', $style)) . '"' : ''
         ),
     ]);
+}
+
+/** Body class + style for a page's settings (classes from the manifest, bg/color from the palette). */
+function ve_page_body(array $page): array
+{
+    $ps = is_array($page['settings'] ?? null) ? $page['settings'] : [];
+    $classes = ve_classes(trim('ve-page ' . ($ps['classes'] ?? '') . (!empty($ps['full_width']) ? ' page-full' : '')));
+    $style = [];
+    if (!empty($ps['bg']))    $style[] = '--page-bg:' . ve_color($ps['bg']);
+    if (!empty($ps['color'])) $style[] = '--page-color:' . ve_color($ps['color']);
+    return ['class' => $classes, 'style' => implode(';', $style)];
+}
+
+/**
+ * Global theme -> CSS custom properties. 'vars' apply everywhere, 'dark' only in
+ * dark mode (forced, or "auto" + a dark system setting).
+ */
+function ve_theme_css(array $theme): string
+{
+    $block = function (array $vars): string {
+        $out = [];
+        foreach ($vars as $name => $value) {
+            if (is_string($name) && preg_match('/^[a-z0-9-]+$/', $name) && is_scalar($value)) {
+                $out[] = '--' . $name . ':' . ve_css_value((string) $value);
+            }
+        }
+        return implode(';', $out);
+    };
+    $css = '';
+    if ($light = $block($theme['vars'] ?? [])) {
+        $css .= ':root{' . $light . '}';
+    }
+    if ($dark = $block($theme['dark'] ?? [])) {
+        $css .= ':root[data-theme="dark"]{' . $dark . '}'
+              . '@media (prefers-color-scheme: dark){:root[data-theme="auto"]{' . $dark . '}}';
+    }
+    return $css;
+}
+
+function ve_theme_mode(array $theme): string
+{
+    return in_array($theme['mode'] ?? '', ['light', 'dark', 'auto'], true) ? $theme['mode'] : 'auto';
 }
 
 function ve_render_page(array $page): string

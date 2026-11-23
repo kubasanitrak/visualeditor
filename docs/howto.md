@@ -60,6 +60,7 @@ Every database change, in order. When a migration is added, add a row here.
 | `001_init`       | Phase 0        | Creates `media`, `pages`, `components`, `items`, `settings`, `users`.        |       |
 | `002_seed_demo`  | Phase 0        | Inserts the demo pages (home, about, 404), demo images and theme settings.   | Runs on **any** empty database, live included. See [first deploy](#5-first-deploy-to-a-live-server). |
 | `003_redirects`  | Phase 1 (gaps) | Creates `redirects`: old page addresses send visitors to the new one (301).  | Without it the site still works, but renamed pages lose their old address. |
+| `004_palette_tokens` | Phase 2    | Switches the demo dark band (item 12) from raw colours to palette colours (`dark` / `light`). | Only touches that item, and only if it still has the original demo colours. Without it the band looks the same but ignores palette changes. |
 
 To see what a database already has, look at the `schema_migrations` table in
 phpMyAdmin: one row per applied migration.

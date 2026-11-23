@@ -2,7 +2,7 @@
 
 An edit-what-you-see content editor for simple portfolio sites. Plain PHP, vanilla JS and CSS, MySQL/MariaDB. No Node, no build step.
 
-Current state: **Phase 1, content editing.** Pages render from the database; a logged-in owner edits text, media, items and page settings in place.
+Current state: **Phase 2, styling.** Pages render from the database; a logged-in owner edits text, media, items and page settings in place, and restyles items, pages and the whole site from predefined styles.
 
 **Running, updating or deploying a site: see [docs/howto.md](docs/howto.md).** After every update, run the installer.
 
@@ -57,7 +57,9 @@ Item types: `section`, `row`, `col` (containers) and `heading`, `text`, `image`,
 ## Adding a style
 
 1. Add the CSS class to `site/css/library.css`.
-2. Add one entry to the matching group in `site/styles.manifest.json`.
+2. Add one entry to the matching group in `site/styles.manifest.json` (or a new group with `applies` listing the item types, or `page`).
+
+Palette colours and global options (animation speed, corner radii) live in the manifest's `theme` section; each option sets one CSS variable from a fixed list of choices.
 
 ## Adding a migration
 

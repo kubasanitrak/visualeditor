@@ -257,20 +257,20 @@ absent.
 - [x] Page meta: custom slug, social share image
 
 **Gate:** the site owner updates a portfolio page end to end without
-touching code.
+touching code. *Passed (Nov 23, 2026).*
 
 ### Phase 2: Styling from predefined classes
 
-- [ ] Item settings: background, font colour, animation, position,
+- [x] Item settings: background, font colour, animation, position,
   width, aspect ratio, image fit/focal point
 
-- [ ] Page settings: background, font colour, full width, predefined
+- [x] Page settings: background, font colour, full width, predefined
   grid
 
-- [ ] Global settings as CSS variables: colours, light/dark mode,
+- [x] Global settings as CSS variables: colours, light/dark mode,
   animation timing, border radius
 
-- [ ] Pickers generated from the style manifest
+- [x] Pickers generated from the style manifest
 
 **Gate:** a page can be fully restyled without editing CSS.
 
