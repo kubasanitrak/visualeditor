@@ -15,6 +15,12 @@ styling directly on the page.
   typography, transitions, animations), never free-form CSS. Styling
   management arrives in Phase 2, after content editing.
 
+- **Component variants:** layout components (header, menu button,
+  navigation, later more) come from a growing, cross-project bank of
+  variants written in SCSS + vanilla JS (+ GSAP). The developer picks
+  variants per project at setup; the owner tweaks their options in the
+  editor.
+
 - **Architecture:** a reusable, updatable **admin core** that sits on
   top of project-specific **content**. If the admin layer is removed,
   the site keeps working as a plain website.
@@ -110,6 +116,38 @@ Each class is registered in a manifest (name, label, group, icon), so
 the editor UI builds its pickers from the manifest instead of
 hard-coding them. Adding a style = add CSS + one manifest entry.
 
+## Component variant library
+
+Layout components with their own markup, styling and behaviour (header,
+menu button, navigation; later sliders, galleries, footers) are built
+as **variants** in a shared bank that grows with every project.
+
+- **The bank** is a separate git repo used by all projects. One folder
+  per variant: `<family>/<variant>/` with `variant.json`, a SCSS
+  partial, an optional PHP template and an optional ES module (vanilla
+  JS, GSAP where it helps).
+
+- **Setup (developer, before editing starts)** picks the variants a
+  project uses and copies them into the project, pinned to that
+  version, so later changes in the bank never break a finished site.
+  Only the chosen SCSS and JS end up in the site.
+
+- **Variant vs option:**
+
+  | | Who | When | How |
+  |---|---|---|---|
+  | Variant (sticky header that slides out on scroll, dots menu button, foldable navigation) | Developer | Setup | SCSS, JS, template |
+  | Option (colours, blend mode, transition, easing, duration, animation) | Owner | Editor | Manifest classes and CSS variables declared in `variant.json` |
+
+- **Tokens:** values the owner or a Figma import can change are CSS
+  custom properties (runtime); SCSS uses them through `var(--…)`.
+  SCSS variables are only for structure, mixins and breakpoints
+  (compile-time, changed by recompiling).
+
+- **Adding a variant** = a new folder in the bank, then setup + Sass
+  compile in the project. The editor picks up its options from
+  `variant.json` without code changes.
+
 ## Editor UI principles
 
 - **Minimal:** the editor stays out of the way of the content. A
@@ -129,8 +167,10 @@ hard-coding them. Adding a style = add CSS + one manifest entry.
 ## Architecture & tech stack
 
 The system is split into a shared **admin core** and per-project
-**content**, built with plain PHP, vanilla JS and CSS, with no build
-step.
+**content**, built with plain PHP, vanilla JS and CSS/SCSS. There is
+no Node, bundler or server-side build: SCSS is compiled on the
+developer's machine with Dart Sass and the compiled CSS is committed and
+uploaded, so the runtime never needs a build step.
 
 <img src="media/image1.png" style="width:6in;height:3.33928in"
 alt="architecture · admin core over site content" />
@@ -143,8 +183,12 @@ architecture · admin core over site content
   into each project and can be updated on its own, with no ties to any
   project's content.
 
-- **Content:** page templates, CSS class library, database records and
-  media. It belongs to the project.
+- **Content:** page templates, CSS class library, the variants copied
+  from the bank, database records and media. It belongs to the project.
+
+- **Component bank:** a third, shared part next to the admin core: the
+  source of component variants. Projects copy from it at setup and do
+  not depend on it at runtime.
 
 - **Detachable:** when a project ends (client leaves, maintenance
   stops), the admin folder is removed or disabled. The site does not
@@ -160,6 +204,8 @@ architecture · admin core over site content
 |-----------------|----------------------------------------------------------------------------------------------------|
 | Server language | PHP (runs on MAMP and on standard shared hosting)                                                  |
 | Front end       | Vanilla JS (ES modules) + CSS. Avoid Node, React and JS build tools                                |
+| Styles          | SCSS compiled with Dart Sass (standalone, no Node) at development time; compiled CSS is deployed   |
+| Motion          | CSS first; GSAP (vendored) for component variants that need it                                    |
 | Database        | MariaDB / MySQL to start. PostgreSQL kept as an option via PDO                                     |
 | Local dev       | MAMP on localhost (MySQL)                                                                          |
 | Production      | MariaDB on the live server                                                                         |
@@ -221,25 +267,25 @@ alt="roadmap · 5 phases, a gate after each" />
 
 roadmap · 5 phases, a gate after each
 
-Phases 2b (header, footer & navigation) and 2c (design tokens & Figma
-import) were added after kick-off, between Phase 2 and Phase 3; the
-roadmap image predates them.
+Phases 2b (component variant library, header, footer & navigation) and
+2c (design tokens & Figma import) were added after kick-off, between
+Phase 2 and Phase 3; the roadmap image predates them.
 
 ### Phase 0: Foundation
 
-- [ ] Local setup as above: MAMP, DB, folder structure, config, PDO
+- [x] Local setup as above: MAMP, DB, folder structure, config, PDO
   helper
 
-- [ ] DB schema v1 + migrations runner
+- [x] DB schema v1 + migrations runner
 
-- [ ] Front controller + page renderer from DB (no admin)
+- [x] Front controller + page renderer from DB (no admin)
 
-- [ ] CSS class library v1 + style manifest
+- [x] CSS class library v1 + style manifest
 
-- [ ] One seeded portfolio page
+- [x] One seeded portfolio page
 
 **Gate:** the test page renders from the DB with the admin folder
-absent.
+absent. *Passed.*
 
 ### Phase 1: Content editing (MVP)
 
@@ -276,24 +322,110 @@ touching code. *Passed (Nov 23, 2026).*
 
 - [x] Pickers generated from the style manifest
 
-**Gate:** a page can be fully restyled without editing CSS.
+**Gate:** a page can be fully restyled without editing CSS. *Passed
+(Nov 24, 2026).*
 
-### Phase 2b: Header, footer & navigation
+### Phase 2b: Component variant library + header, footer & navigation
 
-Fixed header and footer templates with editable slots; styling only
-from manifest options. Free-form header/footer layouts come later as
-reusable components in Phase 3.
+Header, menu button and navigation become the first families of a
+**component variant library** (see [Component variant
+library](#component-variant-library)). The developer picks variants
+per project at setup; the owner edits content and the options each
+variant exposes. Free-form header/footer layouts built from reusable
+components still come in Phase 3.
+
+**Library mechanism**
+
+- [ ] Variant format in the shared bank (`visualeditor_lib`, see
+  [Component variant library](#component-variant-library); path set in
+  `config.php` as `library_path`): one folder per variant,
+  `<family>/<variant>/` with `variant.json` (id, label, family, needs
+  such as `gsap`, editor options), a SCSS partial, optional template
+  `<family>.php` (only when the markup differs from the family
+  default) and an optional ES module.
+
+- [ ] Setup tool `admin/tools/setup.php` (CLI and localhost page, like
+  the installer): pick variants per family, copy them into
+  `site/components/<family>/<variant>/` (pinned; re-run to update),
+  write `site/project.json` (chosen variants), the generated
+  `site/scss/_components.scss` and `site/js/components.js`.
+
+- [ ] SCSS pipeline: `site/scss/main.scss` → `site/css/site.css`,
+  compiled with Dart Sass on the developer's machine; the compiled CSS
+  is committed and uploaded. `base.css` and `library.css` move into
+  SCSS partials (`_tokens`, `_base`, `_library`) so the site loads one
+  stylesheet. Steps documented in `docs/howto.md`.
+
+- [ ] Runtime stays build-free: `site.js` imports
+  `components.js` (chosen variant modules only); GSAP vendored in
+  `site/js/vendor/`, loaded only when a chosen variant needs it. Every
+  variant works without JS where it can (progressive enhancement).
+
+- [ ] Editor: the manifest is merged from `site/styles.manifest.json`
+  and the installed variants' `variant.json` options, so the existing
+  pickers offer variant options without editor code changes. When
+  setup installs more than one variant of a family, the owner can
+  switch between them.
+
+**Header, footer & navigation**
 
 - [ ] Data in `settings` (no new table): `nav` with three menus (`top`,
   `footer`, `social`), plus `header` and `footer` (logo, site title,
-  tagline, footer text). Menu links point to a page **by id** (slug
-  changes never break a menu), an external URL or an anchor. Social
-  links = network + URL, icons from a small SVG set in
-  `site/icons/social/`.
+  tagline, footer text, chosen variant + options). Menu links point to
+  a page **by id** (slug changes never break a menu), an external URL
+  or an anchor. Social links = network + URL, icons from a small SVG
+  set in `site/icons/social/`.
 
-- [ ] `site/templates/header.php` and `footer.php`, included by
-  `layout.php`; fall back to the site name when settings are missing,
-  so the site works without `admin/` or the migration.
+- [ ] Family default templates `site/templates/header.php` and
+  `footer.php`, included by `layout.php`, with slots (logo, title,
+  tagline, menu, menu button); fall back to the site name when
+  settings are missing, so the site works without `admin/` or the
+  migration.
+
+- [ ] Mobile menu with the **checkbox hack** (opens without JS), using
+  the markup of the existing starter kit
+  (`visualeditor_lib`, `index.html` + `5-components/_03.*`):
+
+  ```html
+  <div class="nav">
+    <input type="checkbox" id="nav-top" class="nav-switch desktop-hide">
+    <label for="nav-top" class="hamburger hamburger--x desktop-hide"><span>menu</span></label>
+    <div class="menu" style="--menu-items:5">
+      <ul class="main-nav-list nav-list list-none">
+        <li style="--i:0"><a href="…">…</a></li> …
+      </ul>
+    </div>
+  </div>
+  ```
+
+  Changes when the starter kit's partials move into the bank:
+  - The checkbox is **visually hidden, not `display: none`**, so
+    keyboard users can focus it and toggle it with Space; the label
+    shows a focus ring via `.nav-switch:focus-visible ~ label`.
+  - Ids come from the renderer (`nav-top`, `nav-footer`), never
+    hard-coded, so two menus on a page never clash.
+  - The open height never depends on a hard-coded item count (the
+    owner edits menus): open with a `grid-template-rows: 0fr → 1fr`
+    transition, or from `--menu-items`, which the renderer outputs.
+    It also outputs `--i` per item for staggered reveals.
+  - Each menu-button variant is scoped under its modifier class
+    (`.hamburger--x`, `.hamburger--dots`) instead of redefining
+    `.hamburger`, so several can be installed and the owner can switch.
+  - Colours and timings the owner or Figma can change become CSS
+    custom properties (`--nav-bg`, `--nav-duration`, `--ham-color`…,
+    defaulting to palette tokens); SCSS variables stay for sizes and
+    breakpoints (`mq()` mixin).
+  - The collapse breakpoint (`desktop-hide`, `mq-L-UP`) is a precompiled
+    class per option (never, tablet, mobile).
+  - Small JS layer on top: Escape closes, a link click closes, focus
+    returns to the button. Without JS the menu still works.
+
+- [ ] First variants:
+  - header: static, sticky, fixed with slide out/in on scroll
+  - menu button: hamburger to X (`_03.02-hamburgerX`), dots
+    (`_03.02-hamburgerDOTS`), logo, text label
+  - navigation: inline with collapse breakpoint, foldable (mobile
+    style) on all screens
 
 - [ ] Logo as SVG, inlined so it follows `currentColor` and blend
   modes; SVG sanitised on upload (no scripts, `on*` attributes,
@@ -301,49 +433,56 @@ reusable components in Phase 3.
 
 - [ ] Editor: Navigation tab in the Site panel (add, reorder, remove
   links, page picker); inline editing of site title and tagline;
-  "Show in menu" option when creating a page.
-
-- [ ] Styling via manifest groups (`applies: header / footer`):
-  background and text colour (palette tokens), blend mode, position
-  (static, sticky, fixed, overlay on first section), layout variant
-  (logo left/nav right, centred), collapse breakpoint for the burger
-  menu (never, tablet, mobile).
-
-- [ ] Burger menu toggle in `site/js/site.js` (no admin dependency).
+  "Show in menu" option when creating a page; header/footer style
+  (palette colours, blend mode, variant options such as transition,
+  easing, duration, collapse breakpoint).
 
 - [ ] Page-level option: hide header and/or footer on a page.
 
 **Gate:** the owner changes the logo, all three menus, header colours,
-blend mode and mobile behaviour, and hides the header on one page,
-without editing code; removing `admin/` leaves the header and footer
-working.
+blend mode, menu button and mobile behaviour, and hides the header on
+one page, without editing code. A new variant added to the bank and
+installed with setup shows up in the editor with no editor code
+changes. Removing `admin/` leaves header, footer and the mobile menu
+working (also with JS off).
 
 ### Phase 2c: Design tokens & Figma import
+
+Tokens feed the variant library: anything the owner or an import can
+change is a CSS custom property that the SCSS reads with `var(--…)`.
+Values that cannot be custom properties (media/container query
+breakpoints) go into `site/scss/_settings.scss` and need a recompile.
 
 - [ ] Extend the theme model: typography for headlines (h1–h6) and
   paragraphs (font family, size, weight, line height, letter spacing,
   colour token), rendered as CSS variables by `ve_theme_css()` and
-  used in `library.css`.
+  used in the SCSS library.
 
 - [ ] Button tokens: border, radius, background, text and focus colour,
   hover state. Other form elements (inputs, radios, checkboxes) wait
   until a form item type exists.
+
+- [ ] Component tokens for the variant library (e.g. header height,
+  menu panel background, transition duration and easing), declared in
+  `variant.json` so imports and the editor know them.
 
 - [ ] Fonts: self-hosted woff2 upload generating `@font-face`
   (preferred, GDPR-friendly), or a Google Fonts URL.
 
 - [ ] Token import: Figma variables exported to JSON with an
   export-variables plugin; a PHP importer maps the JSON to
-  `settings.theme`. First as a command
+  `settings.theme` (runtime tokens) and `_settings.scss` (compile-time
+  values). First as a command
   (`php admin/tools/import-tokens.php tokens.json`), later as an admin
   upload that previews the changes before applying.
 
 - [ ] Starter Figma file convention: variable collections named like
-  the tokens (`color/*`, `type/h1/*`, `button/*`), so the import maps
-  1:1. Document it in `docs/howto.md`.
+  the tokens (`color/*`, `type/h1/*`, `button/*`, `header/*`), so the
+  import maps 1:1. Document it in `docs/howto.md`.
 
 **Gate:** importing a designer's Figma variables export restyles
-colours, typography and buttons across the whole site.
+colours, typography, buttons and the installed header/navigation
+variants across the whole site.
 
 ### Phase 3: Layout & components
 
@@ -401,3 +540,18 @@ leaves it intact.
   GD/Imagick on the host)?
 
 - [ ] Multiple editors per site, or a single owner account?
+
+- [x] Component bank: the starter kit, now its own repo
+  `visualeditor_lib` (local `~/Sites/visualeditor/visualeditor_lib`,
+  GitHub `kubasanitrak/visualeditor_lib`). ITCSS layers 1–4 become the
+  project core, `5-components/` the variant families, restructured
+  into `<family>/<variant>/` folders in Phase 2b. *Decided Nov 24, 2026.*
+
+- [ ] How setup shows that a project's pinned variant is older than the
+  bank's.
+
+- [x] Starter kit SCSS under Dart Sass: fixed, not silenced. `@use`
+  instead of `@import` (each partial loads the settings and mixins it
+  needs), `math.div()` instead of `/`, `color.adjust()` instead of
+  `darken()`, declarations moved above nested rules. Ruby Sass can no
+  longer compile it. *Decided Nov 24, 2026.*
