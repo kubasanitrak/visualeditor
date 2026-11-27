@@ -1,5 +1,6 @@
 {
 	"family": "footer",
+	"order": 90,
 	"label": "Footer",
 	"description": "Site footer with slots: footer menu, social links, footer text.",
 	"base": { "scss": "_base.scss" },

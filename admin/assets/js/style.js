@@ -178,8 +178,74 @@ export async function openSitePanel() {
                     ))),
                 el('small.ve-admin-muted', {}, 'Items and pages pick from these colours, so a change here restyles the whole site.')),
             ...cfg.options.map(o => section(o.label, choiceChips(o.label, o.choices, theme.options[o.var], v => save({ options: { [o.var]: v } })))),
+            ...(cfg.components || []).map(c => componentBlock(c, cfg.palette, next => {
+                cfg.components = cfg.components.map(x => x.family === next.family ? next : x);
+                configPromise = Promise.resolve({ ...cfg, theme });
+            })),
         );
     };
     render();
     return d;
+}
+
+/* ---------- component variants (header, menu button, navigation, footer) ---------- */
+
+/**
+ * Pickers for one installed component family, built only from what its
+ * family.json / variant.json declare: the variant (when more than one is
+ * installed), option groups and tokens of that variant.
+ */
+function componentBlock(comp, palette, onSaved) {
+    const box = el('div.ve-admin-component');
+    const knownClasses = [
+        ...comp.variants.map(v => v.class),
+        ...comp.groups.flatMap(g => g.classes.map(c => c.class)),
+    ].flatMap(c => c.split(/\s+/)).filter(Boolean);
+
+    const save = async patch => {
+        try {
+            const r = await api('components.update', { body: { family: comp.family, ...patch } });
+            comp = { ...comp, state: r.state };
+            document.getElementById('ve-components').textContent = r.css;
+            // Live update of the rendered component: swap only the classes the family owns.
+            document.querySelectorAll(`[data-ve-component="${comp.family}"]`).forEach(node => {
+                node.classList.remove(...knownClasses);
+                node.classList.add(...r.state.class.split(/\s+/).filter(Boolean));
+            });
+            onSaved(comp);
+            toast('Saved');
+        } catch (e) { toast(e.message, 'error'); }
+        render();
+    };
+
+    const render = () => {
+        const { state } = comp;
+        const active = x => x.variant === null || x.variant === state.variant;
+        const classes = new Set(state.classes);
+        const parts = [el('h2.ve-admin-component-title', {}, comp.label)];
+
+        if (comp.variants.length > 1) {
+            parts.push(section('Style', choiceChips(comp.label, comp.variants.map(v => ({ value: v.id, label: v.label })),
+                state.variant, v => save({ variant: v }))));
+        }
+        for (const g of comp.groups.filter(active)) {
+            const pick = next => save({ classes: [...next].join(' ') });
+            // A group with a default always has one option on: chips without "None".
+            const chips = g.default
+                ? choiceChips(g.label, g.classes.map(c => ({ value: c.class, label: c.label })),
+                    g.classes.find(c => classes.has(c.class))?.class,
+                    v => { const next = new Set(classes); g.classes.forEach(c => next.delete(c.class)); next.add(v); pick(next); })
+                : groupChips(g, classes, pick);
+            parts.push(section(g.label, chips));
+        }
+        for (const t of comp.tokens.filter(active)) {
+            const current = state.tokens[t.var] || '';
+            parts.push(section(t.label, t.type === 'color'
+                ? swatches(t.label, palette, current, v => save({ tokens: { [t.var]: v || null } }), 'Default')
+                : choiceChips(t.label, t.choices, current || t.default, v => save({ tokens: { [t.var]: v === t.default ? null : v } }))));
+        }
+        box.replaceChildren(...parts);
+    };
+    render();
+    return box;
 }

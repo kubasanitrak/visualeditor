@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/components.php';
 
 const VE_CONTAINER_TYPES = ['section', 'row', 'col'];
 

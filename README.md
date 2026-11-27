@@ -53,7 +53,7 @@ Target: PHP 8.4, MariaDB 10.5, Apache with `mod_rewrite`. First deploy, updates 
 - `pages`: slug, title, meta, OG image, page settings (JSON)
 - `items`: tree per page (`parent_id`, `sort`), `type`, `content` (JSON), `classes` (from the manifest), `settings` (JSON)
 - `components`: reusable masters; `items.component_id` links instances
-- `media`, `settings` (global, key -> JSON), `users`, `redirects` (old slug -> page), `schema_migrations`
+- `media`, `settings` (global, key -> JSON: `theme`, `components` (chosen variant, options and tokens per component family), ...), `users`, `redirects` (old slug -> page), `schema_migrations`
 
 Item types: `section`, `row`, `col` (containers) and `heading`, `text`, `image`, `video`.
 

@@ -1,5 +1,6 @@
 {
 	"family": "menu-button",
+	"order": 20,
 	"label": "Menu button",
 	"description": "The button that opens a folded navigation: a <label> for the nav's checkbox. Variants are scoped under their modifier class (.hamburger--x, .hamburger--dots...), so several can be installed and the owner can switch.",
 	"base": { "scss": "_base.scss" },

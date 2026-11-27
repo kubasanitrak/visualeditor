@@ -1,7 +1,7 @@
 {
     "note": "Component variants chosen for this project. Written by admin/tools/setup.php; re-run it to change or update them.",
-    "bank_commit": "9a541f7f2505fdf5db7b5c05d6711f6b695b7392",
-    "installed_at": "2026-11-27T20:07:19+00:00",
+    "bank_commit": "1a1ffa20212bbd47acca46929266d6945156b885",
+    "installed_at": "2026-11-27T20:16:27+00:00",
     "needs": [],
     "families": {
         "footer": [

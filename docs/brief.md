@@ -372,11 +372,16 @@ components still come in Phase 3.
   *Done (Nov 27, 2026): `site.js` is an ES module; GSAP is loaded by
   `components.js` only when an installed variant lists it in `needs`.*
 
-- [ ] Editor: the manifest is merged from `site/styles.manifest.json`
+- [x] Editor: the manifest is merged from `site/styles.manifest.json`
   and the installed variants' `variant.json` options, so the existing
   pickers offer variant options without editor code changes. When
   setup installs more than one variant of a family, the owner can
   switch between them.
+  *Done (Nov 27, 2026): `site/lib/components.php` merges what setup
+  installed; the owner's choices live in `settings.components` (variant,
+  option classes, tokens per family), shown in the Site panel in
+  `family.json` `order`. Options and tokens of a variant appear only
+  while that variant is selected.*
 
 **Header, footer & navigation**
 

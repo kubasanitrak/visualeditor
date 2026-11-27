@@ -190,3 +190,91 @@ function ve_admin_update_theme(array $in): array
     ]);
     return $theme;
 }
+
+/* ---------- component variants (Phase 2b) ---------- */
+
+/**
+ * Installed component families for the editor, each with its current state.
+ * Merged from site/project.json and the installed family.json / variant.json
+ * (site/lib/components.php), so a new variant shows up with no editor changes.
+ */
+function ve_admin_components_config(): array
+{
+    $out = [];
+    foreach (ve_components() as $family => $f) {
+        $out[] = [
+            'family'   => $family,
+            'label'    => $f['label'],
+            'variants' => array_values($f['variants']),
+            'groups'   => $f['groups'],
+            'tokens'   => $f['tokens'],
+            'state'    => ve_component_state($family),
+        ];
+    }
+    return $out;
+}
+
+/**
+ * Update the owner's choices for one family:
+ *   {family, variant?, classes?: "a b", tokens?: {var: value|null}}
+ * Classes must come from option groups active for the (new) variant; token
+ * values must be palette colours ('transparent' allowed) or one of the
+ * token's choices. Returns ['state' => ..., 'css' => ...].
+ */
+function ve_admin_update_component(array $in): array
+{
+    $family = (string) ($in['family'] ?? '');
+    $f = ve_components()[$family] ?? ve_admin_fail('This component is not installed. Run admin/tools/setup.php.');
+
+    // Read fresh (ve_settings() is cached per request).
+    $json = q("SELECT `value` FROM settings WHERE `key` = 'components'")->fetchColumn();
+    $all = $json !== false ? ve_json($json) : [];
+    $stored = is_array($all[$family] ?? null) ? $all[$family] : [];
+
+    if (array_key_exists('variant', $in)) {
+        if (!isset($f['variants'][$in['variant']])) ve_admin_fail("Unknown {$f['label']} variant.");
+        $stored['variant'] = $in['variant'];
+    }
+    $variant = ve_component_state($family, $stored)['variant'];
+    $active = ve_component_active($f, $variant);
+
+    if (array_key_exists('classes', $in)) {
+        $wanted = array_values(array_unique(preg_split('/\s+/', trim((string) $in['classes']), -1, PREG_SPLIT_NO_EMPTY) ?: []));
+        $groupOf = [];
+        foreach ($active['groups'] as $g) {
+            foreach ($g['classes'] as $c) $groupOf[$c['class']] = $g;
+        }
+        $used = [];
+        foreach ($wanted as $class) {
+            $g = $groupOf[$class] ?? ve_admin_fail("The option “{$class}” is not available for this {$f['label']}.");
+            if ($g['exclusive'] && isset($used[$g['id']])) ve_admin_fail("Pick only one option for “{$g['label']}”.");
+            $used[$g['id']] = true;
+        }
+        $stored['classes'] = implode(' ', $wanted);
+    }
+
+    if (isset($in['tokens']) && is_array($in['tokens'])) {
+        $byVar = array_column($active['tokens'], null, 'var');
+        $tokens = is_array($stored['tokens'] ?? null) ? $stored['tokens'] : [];
+        foreach ($in['tokens'] as $var => $value) {
+            $t = $byVar[$var] ?? ve_admin_fail('Unknown setting.');
+            if ($value === null || $value === '') {
+                unset($tokens[$var]);
+                continue;
+            }
+            if ($t['type'] === 'color') {
+                if ($value !== 'transparent') ve_admin_check_color($value);
+            } elseif (!in_array($value, array_column($t['choices'], 'value'), true)) {
+                ve_admin_fail("Pick one of the choices for “{$t['label']}”.");
+            }
+            $tokens[$var] = $value;
+        }
+        $stored['tokens'] = $tokens;
+    }
+
+    $all[$family] = $stored;
+    q("INSERT INTO settings (`key`, `value`) VALUES ('components', ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)", [
+        json_encode($all, JSON_UNESCAPED_SLASHES),
+    ]);
+    return ['state' => ve_component_state($family, $stored), 'css' => ve_components_css($all)];
+}

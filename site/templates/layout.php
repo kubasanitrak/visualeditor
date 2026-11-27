@@ -24,6 +24,7 @@ $bodyAttr = ve_page_body($page);
     <?php endif; ?>
     <link rel="stylesheet" href="<?= e(ve_url('site/css/site.css')) ?>?v=<?= @filemtime(__DIR__ . '/../css/site.css') ?: 0 ?>">
     <style id="ve-theme"><?= $themeCss ?></style>
+    <style id="ve-components"><?= ve_components_css($settings['components'] ?? []) ?></style>
 </head>
 <body class="<?= e($bodyAttr['class']) ?>"<?= $bodyAttr['style'] !== '' ? ' style="' . e($bodyAttr['style']) . '"' : '' ?> data-ve-page="<?= (int) $page['id'] ?>">
 <main class="ve-main">

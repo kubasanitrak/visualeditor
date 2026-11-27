@@ -1,5 +1,6 @@
 {
 	"family": "header",
+	"order": 10,
 	"label": "Header",
 	"description": "Site header with slots: logo, title, tagline, navigation (with its menu button).",
 	"base": { "scss": "_base.scss", "js": "base.js" },

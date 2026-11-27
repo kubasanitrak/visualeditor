@@ -259,6 +259,8 @@ html:not(.ve-admin-editing) figcaption.ve-admin-ghost { display: none; }
 .ve-admin-style-section { display: flex; flex-direction: column; gap: 8px; }
 .ve-admin-style-section h3 { margin: 0; font-size: 12px !important; font-weight: 600 !important; color: var(--ve-admin-muted); text-transform: uppercase !important; letter-spacing: .06em !important; }
 .ve-admin-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.ve-admin-component { display: flex; flex-direction: column; gap: 16px; padding-top: 16px; border-top: 1px solid var(--ve-admin-line); }
+.ve-admin-component-title { margin: 0; font-size: 15px !important; font-weight: 600 !important; }
 .ve-admin-chip {
     height: 28px; padding: 0 10px; margin: 0; border: 1px solid var(--ve-admin-line); border-radius: 999px;
     background: #fff; color: var(--ve-admin-ink); cursor: pointer; white-space: nowrap;

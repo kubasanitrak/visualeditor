@@ -1,5 +1,6 @@
 {
 	"family": "nav",
+	"order": 30,
 	"label": "Navigation",
 	"description": "Main menu. Folds into a panel behind the menu button (checkbox hack, works without JS); the menu-button family draws the button.",
 	"base": { "scss": "_base.scss", "js": "base.js" },

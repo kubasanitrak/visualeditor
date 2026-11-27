@@ -43,6 +43,8 @@ Rendered items carry `data-ve-id` and `data-ve-type`; the editor should find ite
 
 Tables: `pages`, `items` (tree via `parent_id` + `sort`; `content`/`settings` are JSON in LONGTEXT; `classes` = space-separated manifest classes), `components`, `media`, `settings` (key -> JSON), `users`, `redirects` (old slug -> page, 301 after a slug change), `schema_migrations`.
 
+Component variants: `site/lib/components.php` reads what setup installed (`site/project.json` + copied `family.json`/`variant.json`) and the owner's choices in `settings.components` (`{family: {variant, classes, tokens}}`); `ve_component_state()` gives the cleaned state (defaults filled in), `ve_components_css()` the token `:root` block (`<style id="ve-components">`). The editor's Site panel builds its component pickers from `style.config.components`; saves go to `components.update` (checked in `admin/lib/styles.php`). Rendered components carry `data-ve-component="<family>"`.
+
 - Schema changes = a new `admin/migrations/NNN_name.sql`; never edit an applied migration. Run the installer to apply. **Add a row to the migration log in `docs/howto.md`** (what it does, what happens without it), and keep site code working if the table is missing.
 - In SQL seeds, avoid double quotes inside JSON string values (an escaped `\"` in a SQL literal breaks the JSON). Use unquoted HTML attributes or JSON-encode in PHP instead.
 - Passwords: only `password_hash()` / `password_verify()`. Never store or log a plaintext password.

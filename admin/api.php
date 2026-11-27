@@ -16,8 +16,9 @@
  *   GET  ?action=item.get&id=          item data for the style panel
  *   POST ?action=item.style            {id, classes?, settings?: {bg?, color?}} -> {html, item}
  *   POST ?action=page.style            {id, classes?, bg?, color?} -> {body: {class, style}}
- *   GET  ?action=style.config          manifest groups, palette, options + current theme
+ *   GET  ?action=style.config          manifest groups, palette, options + current theme + installed components
  *   POST ?action=theme.update          {mode?, colors?: {token: {light?, dark?}}, options?: {var: value}} -> {css, mode}
+ *   POST ?action=components.update     {family, variant?, classes?, tokens?: {var: value|null}} -> {state, css}
  *   GET  ?action=page.list             all pages
  *   POST ?action=page.create           {title}  -> page (slug made from the title)
  *   POST ?action=page.delete           {id}     (not home / 404)
@@ -303,7 +304,11 @@ try {
                 'palette' => $m['theme']['palette'],
                 'options' => $m['theme']['options'],
                 'theme'   => ve_admin_theme_values(ve_admin_theme()),
+                'components' => ve_admin_components_config(),
             ]);
+
+        case 'POST components.update':
+            ve_api_out(ve_admin_update_component($in));
 
         case 'POST theme.update':
             $theme = ve_admin_update_theme($in);
