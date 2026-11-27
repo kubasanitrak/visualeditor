@@ -336,13 +336,17 @@ components still come in Phase 3.
 
 **Library mechanism**
 
-- [ ] Variant format in the shared bank (`visualeditor_lib`, see
+- [x] Variant format in the shared bank (`visualeditor_lib`, see
   [Component variant library](#component-variant-library); path set in
   `config.php` as `library_path`): one folder per variant,
   `<family>/<variant>/` with `variant.json` (id, label, family, needs
   such as `gsap`, editor options), a SCSS partial, optional template
   `<family>.php` (only when the markup differs from the family
   default) and an optional ES module.
+  *Done in the bank (Nov 27, 2026): `core/` + families `header`,
+  `menu-button`, `nav`, `footer`, each with `family.json` and a shared
+  `_base.scss`; format documented in the bank's README. `library_path`
+  arrives with the setup tool.*
 
 - [ ] Setup tool `admin/tools/setup.php` (CLI and localhost page, like
   the installer): pick variants per family, copy them into
@@ -350,11 +354,13 @@ components still come in Phase 3.
   write `site/project.json` (chosen variants), the generated
   `site/scss/_components.scss` and `site/js/components.js`.
 
-- [ ] SCSS pipeline: `site/scss/main.scss` → `site/css/site.css`,
+- [x] SCSS pipeline: `site/scss/main.scss` → `site/css/site.css`,
   compiled with Dart Sass on the developer's machine; the compiled CSS
   is committed and uploaded. `base.css` and `library.css` move into
   SCSS partials (`_tokens`, `_base`, `_library`) so the site loads one
   stylesheet. Steps documented in `docs/howto.md`.
+  *Done (Nov 27, 2026): compiled output matches the old two files rule
+  for rule.*
 
 - [ ] Runtime stays build-free: `site.js` imports
   `components.js` (chosen variant modules only); GSAP vendored in

@@ -1,6 +1,6 @@
 # Visual Editor
 
-An edit-what-you-see content editor for simple portfolio sites. Plain PHP, vanilla JS and CSS, MySQL/MariaDB. No Node, no build step.
+An edit-what-you-see content editor for simple portfolio sites. Plain PHP, vanilla JS and CSS (SCSS compiled with Dart Sass on the developer's machine), MySQL/MariaDB. No Node, no build step on the server.
 
 Current state: **Phase 2, styling.** Pages render from the database; a logged-in owner edits text, media, items and page settings in place, and restyles items, pages and the whole site from predefined styles.
 
@@ -18,8 +18,8 @@ site/                  site runtime, works without /admin
   lib/db.php           PDO helper: db(), q()
   lib/render.php       loads pages + items, renders templates
   templates/           layout.php + one template per item type
-  css/base.css         reset + design tokens (CSS variables)
-  css/library.css      predefined style classes v1
+  scss/                SCSS source: _tokens (CSS variables), _base, _components, _library (style classes)
+  css/site.css         compiled stylesheet (Dart Sass, committed; see docs/howto.md section 9)
   styles.manifest.json registry of style classes (the editor builds pickers from it)
   js/site.js           scroll-triggered animations
 admin/                 admin core: removable, updatable
@@ -56,8 +56,9 @@ Item types: `section`, `row`, `col` (containers) and `heading`, `text`, `image`,
 
 ## Adding a style
 
-1. Add the CSS class to `site/css/library.css`.
+1. Add the class to `site/scss/_library.scss`.
 2. Add one entry to the matching group in `site/styles.manifest.json` (or a new group with `applies` listing the item types, or `page`).
+3. Recompile `site/css/site.css` ([docs/howto.md, section 9](docs/howto.md#9-compiling-the-css-developers)).
 
 Palette colours and global options (animation speed, corner radii) live in the manifest's `theme` section; each option sets one CSS variable from a fixed list of choices.
 

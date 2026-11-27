@@ -1,0 +1,31 @@
+/* ==========================================================================
+   Base: reset + element defaults.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 { margin: 0 0 .5em; line-height: 1.1; font-family: var(--font-display); font-weight: 600; }
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+p  { margin: 0 0 1em; }
+a  { color: inherit; text-underline-offset: .2em; }
+img, video { display: block; max-width: 100%; height: auto; }
+figure { margin: 0; }
+figcaption { margin-top: .5em; font-size: var(--fs-small); color: var(--color-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}

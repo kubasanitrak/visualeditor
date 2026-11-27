@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Registry of predefined styles. The editor builds every picker from this file. Each class must exist in site/css/library.css. 'applies' lists the item types a group is offered for ('page' = page settings); 'exclusive' means only one class from the group at a time. 'theme' defines the global settings: the colour palette (token -> --color-<token>; 'dark' marks colours that change in dark mode) and options that set one CSS variable from a fixed list of choices.",
+  "note": "Registry of predefined styles. The editor builds every picker from this file. Each class must exist in site/scss/_library.scss (compiled to site/css/site.css). 'applies' lists the item types a group is offered for ('page' = page settings); 'exclusive' means only one class from the group at a time. 'theme' defines the global settings: the colour palette (token -> --color-<token>; 'dark' marks colours that change in dark mode) and options that set one CSS variable from a fixed list of choices.",
   "groups": [
     {
       "id": "section-space",

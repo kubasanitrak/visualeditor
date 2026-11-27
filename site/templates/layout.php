@@ -22,8 +22,7 @@ $bodyAttr = ve_page_body($page);
     <?php if ($og): ?>
     <meta property="og:image" content="<?= e(ve_media_url($og)) ?>">
     <?php endif; ?>
-    <link rel="stylesheet" href="<?= e(ve_url('site/css/base.css')) ?>">
-    <link rel="stylesheet" href="<?= e(ve_url('site/css/library.css')) ?>">
+    <link rel="stylesheet" href="<?= e(ve_url('site/css/site.css')) ?>?v=<?= @filemtime(__DIR__ . '/../css/site.css') ?: 0 ?>">
     <style id="ve-theme"><?= $themeCss ?></style>
 </head>
 <body class="<?= e($bodyAttr['class']) ?>"<?= $bodyAttr['style'] !== '' ? ' style="' . e($bodyAttr['style']) . '"' : '' ?> data-ve-page="<?= (int) $page['id'] ?>">

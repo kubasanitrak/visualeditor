@@ -15,7 +15,7 @@ An edit-what-you-see content editor add-on for simple portfolio websites. **Read
 - MySQL/MariaDB through PDO only (`site/lib/db.php`: `db()`, `q()`); always prepared statements.
 - Targets: local MAMP (PHP 8.x, MySQL on 127.0.0.1:8889); live PHP 8.4 + MariaDB 10.5 on Apache with mod_rewrite. Deploy = upload a folder via FTP + `config/config.php`.
 - **The admin core must stay detachable.** `site/` and `index.php` must never depend on `admin/`. `index.php` loads `admin/bootstrap.php` only if it exists. Removing `admin/` must leave a working site.
-- Styling is applied only through classes registered in `site/styles.manifest.json` (CSS in `site/css/library.css`, moving to SCSS partials in Phase 2b). New style = CSS + one manifest entry; new component variant = a folder in the bank with `variant.json`.
+- Styling is applied only through classes registered in `site/styles.manifest.json` (SCSS in `site/scss/_library.scss`, compiled to `site/css/site.css`). New style = CSS + one manifest entry; new component variant = a folder in the bank with `variant.json`.
 - Owner-editable values are CSS custom properties (runtime); SCSS variables only for structure and breakpoints. Variants degrade without JS where possible.
 - Editor UI: minimal, namespaced (`ve-admin-` prefix for classes/ids so it never clashes with site CSS), simple icons (possibly pixelarticons mini). Destructive actions need a confirmation dialog; everything else applies in one step.
 
@@ -25,7 +25,8 @@ An edit-what-you-see content editor add-on for simple portfolio websites. **Read
 index.php            front controller (slug -> page), optional admin hook
 site/lib/            db.php, render.php (site runtime, no admin knowledge)
 site/templates/      layout.php + items/<type>.php (section, row, col, heading, text, image, video)
-site/css/            base.css (tokens), library.css (style classes)
+site/scss/           main.scss + _tokens, _base, _components (generated), _library (style classes)
+site/css/site.css    compiled from site/scss (Dart Sass, committed; never edit by hand)
 site/components.json component presets the editor can add (item trees)
 site/js/site.js      scroll-triggered animations
 admin/               admin core: install.php, migrations/, bootstrap.php, login/logout.php, api.php, lib/, assets/ (editor.js, editor.css, js/)
@@ -51,6 +52,7 @@ Tables: `pages`, `items` (tree via `parent_id` + `sort`; `content`/`settings` ar
 - Install / migrate: http://localhost:8888/visualeditor/admin/install.php (localhost only), or `php admin/install.php` with MAMP's PHP.
 - Site: http://localhost:8888/visualeditor/ (also `/about`, and any unknown slug shows the 404 page).
 - Lint: `php -l <file>`.
+- Compile CSS: `sass --no-source-map --load-path=site/scss site/scss/main.scss site/css/site.css` (Dart Sass, `/opt/homebrew/bin/sass`; never the Ruby Sass in `/usr/local/bin`). Commit SCSS + compiled CSS together.
 - Phase 0 check: rename `admin/` to `_admin/`, the site must still render, then rename it back.
 
 ## Working style

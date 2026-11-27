@@ -1,0 +1,11 @@
+// Site stylesheet: compiled to site/css/site.css with Dart Sass on the
+// developer's machine (docs/howto.md, "Compile the CSS"). The compiled CSS is
+// committed and uploaded; the server never compiles anything.
+//
+// Order = CSS order: tokens, base, component variants, style library
+// (library classes come last so the owner's picks win over variant defaults).
+
+@use 'tokens';
+@use 'base';
+@use 'components';
+@use 'library';
