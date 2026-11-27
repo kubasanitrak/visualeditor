@@ -1,0 +1,40 @@
+{
+	"family": "header",
+	"label": "Header",
+	"description": "Site header with slots: logo, title, tagline, navigation (with its menu button).",
+	"base": { "scss": "_base.scss", "js": "base.js" },
+	"tokens": [
+		{ "var": "header-bg", "label": "Header background", "type": "color", "default": "transparent" },
+		{ "var": "header-color", "label": "Header text", "type": "color", "default": "text" },
+		{
+			"var": "header-blend", "label": "Blend mode", "type": "choice", "default": "normal",
+			"choices": [
+				{ "value": "normal", "label": "None" },
+				{ "value": "difference", "label": "Difference" },
+				{ "value": "exclusion", "label": "Exclusion" },
+				{ "value": "multiply", "label": "Multiply" },
+				{ "value": "screen", "label": "Screen" }
+			]
+		}
+	],
+	"options": [
+		{
+			"id": "header-layout",
+			"label": "Layout",
+			"exclusive": true,
+			"default": "header--split",
+			"classes": [
+				{ "class": "header--split", "label": "Logo left, menu right" },
+				{ "class": "header--center", "label": "Centred" }
+			]
+		},
+		{
+			"id": "header-overlay",
+			"label": "Over the first section",
+			"exclusive": true,
+			"classes": [
+				{ "class": "header--overlay", "label": "Yes" }
+			]
+		}
+	]
+}

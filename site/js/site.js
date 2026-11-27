@@ -1,4 +1,7 @@
-/* Site runtime: scroll-triggered animations. No dependencies, no build step. */
+/* Site runtime: scroll-triggered animations + installed component variants.
+   Loaded as an ES module. No dependencies, no build step. */
+import './components.js';
+
 (() => {
     const selector = '.anim-fade-in, .anim-slide-up, .anim-slide-left, .anim-slide-right, .anim-zoom-in';
     const items = document.querySelectorAll(selector);

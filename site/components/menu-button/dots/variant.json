@@ -1,0 +1,10 @@
+{
+	"id": "menu-button/dots",
+	"family": "menu-button",
+	"label": "Dots",
+	"description": "Three stacked dots that gather into one when the menu is open.",
+	"version": "1.0.0",
+	"class": "hamburger--dots",
+	"scss": "_dots.scss",
+	"needs": []
+}

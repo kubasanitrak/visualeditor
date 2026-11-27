@@ -1,0 +1,22 @@
+{
+	"id": "nav/foldable",
+	"family": "nav",
+	"label": "Foldable on all screens",
+	"description": "Always behind the menu button, also on desktop. Opens as a drop-down panel or over the whole screen.",
+	"version": "1.0.0",
+	"class": "nav--foldable",
+	"scss": "_foldable.scss",
+	"needs": [],
+	"options": [
+		{
+			"id": "nav-panel",
+			"label": "Menu panel",
+			"exclusive": true,
+			"default": "nav--panel-drop",
+			"classes": [
+				{ "class": "nav--panel-drop", "label": "Drop-down" },
+				{ "class": "nav--panel-full", "label": "Full screen" }
+			]
+		}
+	]
+}

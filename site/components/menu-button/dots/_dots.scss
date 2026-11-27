@@ -1,0 +1,44 @@
+// menu-button/dots: three stacked dots -> one dot.
+@use '../base' as *;
+
+.hamburger--dots {
+	--_dot: var(--ham-dot, 4px);
+	--_gap: var(--ham-gap, 7px);
+
+	@include label-hidden;
+
+	@media (pointer: coarse) {
+		--_dot: var(--ham-dot, 6px);
+		--_gap: var(--ham-gap, 9px);
+	}
+
+	.hamburger__icon,
+	.hamburger__icon::before,
+	.hamburger__icon::after {
+		display: block;
+		inline-size: var(--_dot);
+		block-size: var(--_dot);
+		border-radius: 50%;
+		background-color: currentColor;
+	}
+
+	.hamburger__icon {
+		position: relative;
+	}
+
+	.hamburger__icon::before,
+	.hamburger__icon::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		transition: transform var(--_dur) var(--_ease);
+	}
+
+	.hamburger__icon::before { top: calc(-1 * var(--_gap)); }
+	.hamburger__icon::after { top: var(--_gap); }
+}
+
+.nav-switch:checked + .hamburger--dots {
+	.hamburger__icon::before { transform: translateY(var(--_gap)); }
+	.hamburger__icon::after { transform: translateY(calc(-1 * var(--_gap))); }
+}

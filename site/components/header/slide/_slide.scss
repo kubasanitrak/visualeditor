@@ -1,0 +1,14 @@
+// header/slide: sticky, and slide.js toggles .is-hidden by scroll direction.
+// Moves with `top`, not transform, so a full-screen nav panel inside it
+// (position: fixed) still covers the viewport.
+@use '../base';
+
+.header--slide {
+	position: sticky;
+	top: 0;
+	transition: top var(--_dur) var(--_ease);
+
+	&.is-hidden {
+		top: calc(-1 * var(--header-h, 100vh));
+	}
+}

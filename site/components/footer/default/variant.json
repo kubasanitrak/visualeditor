@@ -1,0 +1,10 @@
+{
+	"id": "footer/default",
+	"family": "footer",
+	"label": "Simple",
+	"description": "Menu, social links and text in one row on wide screens, stacked on small ones.",
+	"version": "1.0.0",
+	"class": "footer--default",
+	"scss": "_default.scss",
+	"needs": []
+}

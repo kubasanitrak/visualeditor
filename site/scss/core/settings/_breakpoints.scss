@@ -1,0 +1,13 @@
+// Compile-time breakpoints. Media queries can't read CSS custom properties,
+// so these stay SCSS variables: change one = recompile.
+// Everything the owner or a token import can change is a CSS custom property instead.
+
+$bp-mobile: 40rem;  // up to here: phone
+$bp-tablet: 51rem;  // up to here: tablet (and phone)
+$bp-wide:   90rem;  // from here: wide desktop
+
+// Collapse points a navigation variant offers: name -> width up to which it stays folded.
+$collapse-points: (
+	mobile: $bp-mobile,
+	tablet: $bp-tablet,
+);

@@ -1,0 +1,10 @@
+{
+	"id": "menu-button/text",
+	"family": "menu-button",
+	"label": "Text label",
+	"description": "The word Menu; reads Close while the menu is open (text from the label's data-close attribute).",
+	"version": "1.0.0",
+	"class": "hamburger--text",
+	"scss": "_text.scss",
+	"needs": []
+}

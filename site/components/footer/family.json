@@ -1,0 +1,10 @@
+{
+	"family": "footer",
+	"label": "Footer",
+	"description": "Site footer with slots: footer menu, social links, footer text.",
+	"base": { "scss": "_base.scss" },
+	"tokens": [
+		{ "var": "footer-bg", "label": "Footer background", "type": "color", "default": "transparent" },
+		{ "var": "footer-color", "label": "Footer text", "type": "color", "default": "text" }
+	]
+}

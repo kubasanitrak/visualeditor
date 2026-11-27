@@ -1,0 +1,17 @@
+{
+	"family": "menu-button",
+	"label": "Menu button",
+	"description": "The button that opens a folded navigation: a <label> for the nav's checkbox. Variants are scoped under their modifier class (.hamburger--x, .hamburger--dots...), so several can be installed and the owner can switch.",
+	"base": { "scss": "_base.scss" },
+	"tokens": [
+		{ "var": "ham-color", "label": "Menu button colour", "type": "color", "default": "text" },
+		{
+			"var": "ham-duration", "label": "Menu button speed", "type": "choice", "default": "300ms",
+			"choices": [
+				{ "value": "150ms", "label": "Fast" },
+				{ "value": "300ms", "label": "Normal" },
+				{ "value": "600ms", "label": "Slow" }
+			]
+		}
+	]
+}

@@ -1,0 +1,38 @@
+// nav/foldable: always folded. The drop-down panel is the family default;
+// the full-screen panel covers the viewport and fades in, with the menu
+// button kept on top so it can close it.
+@use '../base';
+
+.nav--foldable.nav--panel-full {
+	.menu {
+		position: fixed;
+		inset: 0;
+		grid-template-rows: 1fr;
+		align-content: center;
+		opacity: 0;
+		overflow-y: auto;
+		transition:
+			opacity var(--_dur) var(--_ease),
+			visibility 0s var(--_dur);
+	}
+
+	.menu > * {
+		overflow: visible;
+	}
+
+	.nav-list {
+		align-items: center;
+		font-size: var(--nav-full-size, 1.6em);
+	}
+
+	.hamburger {
+		z-index: 2;
+	}
+}
+
+.nav--foldable.nav--panel-full .nav-switch:checked ~ .menu {
+	opacity: 1;
+	transition:
+		opacity var(--_dur) var(--_ease),
+		visibility 0s;
+}

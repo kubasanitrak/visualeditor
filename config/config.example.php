@@ -36,4 +36,9 @@ return [
         'email'         => 'you@example.com',
         'password_hash' => '',
     ],
+
+    // Developer only (admin/tools/setup.php): the shared component bank
+    // (visualeditor_lib) and Dart Sass. Not needed on a live server.
+    'library_path' => '/path/to/visualeditor_lib',
+    'sass_path'    => null,              // null = auto-detect (Dart Sass 1.x only, never Ruby Sass)
 ];

@@ -1,0 +1,7 @@
+// header/sticky: stays at the top while the page scrolls.
+@use '../base';
+
+.header--sticky {
+	position: sticky;
+	top: 0;
+}

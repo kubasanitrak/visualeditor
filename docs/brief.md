@@ -348,11 +348,14 @@ components still come in Phase 3.
   `_base.scss`; format documented in the bank's README. `library_path`
   arrives with the setup tool.*
 
-- [ ] Setup tool `admin/tools/setup.php` (CLI and localhost page, like
+- [x] Setup tool `admin/tools/setup.php` (CLI and localhost page, like
   the installer): pick variants per family, copy them into
   `site/components/<family>/<variant>/` (pinned; re-run to update),
   write `site/project.json` (chosen variants), the generated
   `site/scss/_components.scss` and `site/js/components.js`.
+  *Done (Nov 27, 2026): also copies the bank's SCSS tools to
+  `site/scss/core/` (breakpoints once, then project-owned), records the
+  bank commit in `project.json` and recompiles `site.css`.*
 
 - [x] SCSS pipeline: `site/scss/main.scss` → `site/css/site.css`,
   compiled with Dart Sass on the developer's machine; the compiled CSS
@@ -362,10 +365,12 @@ components still come in Phase 3.
   *Done (Nov 27, 2026): compiled output matches the old two files rule
   for rule.*
 
-- [ ] Runtime stays build-free: `site.js` imports
+- [x] Runtime stays build-free: `site.js` imports
   `components.js` (chosen variant modules only); GSAP vendored in
   `site/js/vendor/`, loaded only when a chosen variant needs it. Every
   variant works without JS where it can (progressive enhancement).
+  *Done (Nov 27, 2026): `site.js` is an ES module; GSAP is loaded by
+  `components.js` only when an installed variant lists it in `needs`.*
 
 - [ ] Editor: the manifest is merged from `site/styles.manifest.json`
   and the installed variants' `variant.json` options, so the existing

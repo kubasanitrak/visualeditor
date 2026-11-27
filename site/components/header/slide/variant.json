@@ -1,0 +1,29 @@
+{
+	"id": "header/slide",
+	"family": "header",
+	"label": "Slides away on scroll",
+	"description": "Sticky; slides out when scrolling down and back in when scrolling up. Without JS it stays sticky.",
+	"version": "1.0.0",
+	"class": "header--slide",
+	"scss": "_slide.scss",
+	"js": "slide.js",
+	"needs": [],
+	"tokens": [
+		{
+			"var": "header-duration", "label": "Slide speed", "type": "choice", "default": "450ms",
+			"choices": [
+				{ "value": "250ms", "label": "Fast" },
+				{ "value": "450ms", "label": "Normal" },
+				{ "value": "800ms", "label": "Slow" }
+			]
+		},
+		{
+			"var": "header-ease", "label": "Slide easing", "type": "choice", "default": "cubic-bezier(.2, .7, .2, 1)",
+			"choices": [
+				{ "value": "cubic-bezier(.2, .7, .2, 1)", "label": "Smooth" },
+				{ "value": "ease-in-out", "label": "Even" },
+				{ "value": "linear", "label": "Linear" }
+			]
+		}
+	]
+}

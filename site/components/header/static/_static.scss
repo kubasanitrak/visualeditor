@@ -1,0 +1,6 @@
+// header/static: scrolls away with the page (the family default behaviour).
+@use '../base';
+
+.header--static {
+	position: relative;
+}

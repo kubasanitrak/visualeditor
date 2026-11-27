@@ -1,0 +1,30 @@
+// menu-button/text: "Menu" -> "Close". The closed text is the label's own
+// text (the checkbox's accessible name); the open text comes from data-close.
+@use 'core/tools/mixins' as *;
+@use '../base';
+
+.hamburger--text {
+	padding-inline: .5em;
+	text-transform: var(--ham-text-transform, uppercase);
+	letter-spacing: var(--ham-letter-spacing, .08em);
+	font-size: var(--ham-font-size, .875em);
+
+	.hamburger__icon {
+		display: none;
+	}
+
+	&::after {
+		content: attr(data-close);
+		display: none;
+	}
+}
+
+.nav-switch:checked + .hamburger--text {
+	.hamburger__label {
+		@include visually-hidden;
+	}
+
+	&::after {
+		display: inline;
+	}
+}

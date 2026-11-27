@@ -1,0 +1,26 @@
+{
+	"family": "nav",
+	"label": "Navigation",
+	"description": "Main menu. Folds into a panel behind the menu button (checkbox hack, works without JS); the menu-button family draws the button.",
+	"base": { "scss": "_base.scss", "js": "base.js" },
+	"tokens": [
+		{ "var": "nav-bg", "label": "Menu panel background", "type": "color", "default": "bg" },
+		{ "var": "nav-color", "label": "Menu panel text", "type": "color", "default": "text" },
+		{
+			"var": "nav-duration", "label": "Open speed", "type": "choice", "default": "450ms",
+			"choices": [
+				{ "value": "250ms", "label": "Fast" },
+				{ "value": "450ms", "label": "Normal" },
+				{ "value": "800ms", "label": "Slow" }
+			]
+		},
+		{
+			"var": "nav-ease", "label": "Open easing", "type": "choice", "default": "cubic-bezier(.2, .7, .2, 1)",
+			"choices": [
+				{ "value": "cubic-bezier(.2, .7, .2, 1)", "label": "Smooth" },
+				{ "value": "ease-in-out", "label": "Even" },
+				{ "value": "cubic-bezier(.34, 1.56, .64, 1)", "label": "Springy" }
+			]
+		}
+	]
+}

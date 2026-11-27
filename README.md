@@ -21,9 +21,12 @@ site/                  site runtime, works without /admin
   scss/                SCSS source: _tokens (CSS variables), _base, _components, _library (style classes)
   css/site.css         compiled stylesheet (Dart Sass, committed; see docs/howto.md section 9)
   styles.manifest.json registry of style classes (the editor builds pickers from it)
-  js/site.js           scroll-triggered animations
+  js/site.js           scroll-triggered animations (ES module), imports js/components.js
+  components/          component variants installed by admin/tools/setup.php
+  project.json         which variants are installed, from which bank commit
 admin/                 admin core: removable, updatable
   install.php          migrations runner
+  tools/setup.php      developer tool: install component variants from the bank
   migrations/          NNN_name.sql, applied in order
 uploads/               media (demo placeholders included)
 docs/brief.md          project brief: scope, architecture, phases

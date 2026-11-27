@@ -1,0 +1,72 @@
+{
+    "note": "Component variants chosen for this project. Written by admin/tools/setup.php; re-run it to change or update them.",
+    "bank_commit": "9a541f7f2505fdf5db7b5c05d6711f6b695b7392",
+    "installed_at": "2026-11-27T20:07:19+00:00",
+    "needs": [],
+    "families": {
+        "footer": [
+            "footer/default"
+        ],
+        "header": [
+            "header/static",
+            "header/sticky",
+            "header/slide"
+        ],
+        "menu-button": [
+            "menu-button/x",
+            "menu-button/dots",
+            "menu-button/text"
+        ],
+        "nav": [
+            "nav/inline",
+            "nav/foldable"
+        ]
+    },
+    "variants": {
+        "footer/default": {
+            "version": "1.0.0",
+            "class": "footer--default",
+            "label": "Simple"
+        },
+        "header/static": {
+            "version": "1.0.0",
+            "class": "header--static",
+            "label": "Static"
+        },
+        "header/sticky": {
+            "version": "1.0.0",
+            "class": "header--sticky",
+            "label": "Sticky"
+        },
+        "header/slide": {
+            "version": "1.0.0",
+            "class": "header--slide",
+            "label": "Slides away on scroll"
+        },
+        "menu-button/x": {
+            "version": "1.0.0",
+            "class": "hamburger--x",
+            "label": "Hamburger to X"
+        },
+        "menu-button/dots": {
+            "version": "1.0.0",
+            "class": "hamburger--dots",
+            "label": "Dots"
+        },
+        "menu-button/text": {
+            "version": "1.0.0",
+            "class": "hamburger--text",
+            "label": "Text label"
+        },
+        "nav/inline": {
+            "version": "1.0.0",
+            "class": "nav--inline",
+            "label": "Inline, folds on small screens"
+        },
+        "nav/foldable": {
+            "version": "1.0.0",
+            "class": "nav--foldable",
+            "label": "Foldable on all screens"
+        }
+    }
+}

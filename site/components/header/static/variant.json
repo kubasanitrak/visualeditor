@@ -1,0 +1,10 @@
+{
+	"id": "header/static",
+	"family": "header",
+	"label": "Static",
+	"description": "Scrolls away with the page.",
+	"version": "1.0.0",
+	"class": "header--static",
+	"scss": "_static.scss",
+	"needs": []
+}

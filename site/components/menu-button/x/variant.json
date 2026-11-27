@@ -1,0 +1,10 @@
+{
+	"id": "menu-button/x",
+	"family": "menu-button",
+	"label": "Hamburger to X",
+	"description": "Three bars that turn into an X when the menu is open.",
+	"version": "1.0.0",
+	"class": "hamburger--x",
+	"scss": "_x.scss",
+	"needs": []
+}

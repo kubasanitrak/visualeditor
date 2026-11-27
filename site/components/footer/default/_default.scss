@@ -1,0 +1,15 @@
+// footer/default: stacked on small screens, one row from tablet up.
+@use 'core/settings/breakpoints' as bp;
+@use 'core/tools/mixins' as *;
+@use '../base';
+
+.footer--default {
+	display: grid;
+	gap: 1rem;
+
+	@include above(bp.$bp-tablet) {
+		grid-auto-flow: column;
+		align-items: baseline;
+		justify-content: space-between;
+	}
+}

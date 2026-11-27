@@ -1,0 +1,46 @@
+// menu-button/x: three bars -> X.
+@use '../base' as *;
+
+.hamburger--x {
+	--_w: var(--ham-icon-w, 24px);
+	--_stroke: var(--ham-stroke, 2px);
+	--_gap: var(--ham-gap, 7px);
+
+	@include label-hidden;
+
+	.hamburger__icon,
+	.hamburger__icon::before,
+	.hamburger__icon::after {
+		display: block;
+		inline-size: var(--_w);
+		block-size: var(--_stroke);
+		border-radius: var(--_stroke);
+		background-color: currentColor;
+	}
+
+	.hamburger__icon {
+		position: relative;
+		transition: background-color 0s var(--_dur);
+	}
+
+	.hamburger__icon::before,
+	.hamburger__icon::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		transition: transform var(--_dur) var(--_ease);
+	}
+
+	.hamburger__icon::before { top: calc(-1 * var(--_gap)); }
+	.hamburger__icon::after { top: var(--_gap); }
+}
+
+.nav-switch:checked + .hamburger--x {
+	.hamburger__icon {
+		background-color: transparent;
+		transition-delay: 0s;
+	}
+
+	.hamburger__icon::before { transform: translateY(var(--_gap)) rotate(45deg); }
+	.hamburger__icon::after { transform: translateY(calc(-1 * var(--_gap))) rotate(-45deg); }
+}

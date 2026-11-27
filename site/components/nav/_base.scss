@@ -1,0 +1,131 @@
+// Navigation: shared rules for every nav variant (copied with any of them).
+//
+// Markup (the renderer outputs it; ids are unique per menu):
+//   <nav class="nav nav--inline nav--collapse-tablet" aria-label="Main">
+//     <input type="checkbox" id="nav-top" class="nav-switch" aria-controls="nav-top-menu">
+//     <label for="nav-top" class="hamburger hamburger--x" data-close="Close">
+//       <span class="hamburger__icon" aria-hidden="true"></span>
+//       <span class="hamburger__label">Menu</span>
+//     </label>
+//     <div class="menu" id="nav-top-menu" style="--menu-items:5">
+//       <ul class="nav-list">
+//         <li style="--i:0"><a href="/">Home</a></li> ...
+//       </ul>
+//     </div>
+//   </nav>
+//
+// Folded by default: the panel drops below the nearest positioned ancestor
+// (the header). Open/close needs no JS. The panel opens with a
+// grid-template-rows 0fr -> 1fr transition, so its height never depends on
+// how many items the owner adds. Closed = visibility: hidden, so the links
+// are not focusable while the menu is shut.
+@use 'core/tools/mixins' as *;
+
+.nav {
+	--_bg: var(--nav-bg, var(--color-bg));
+	--_color: var(--nav-color, var(--color-text, currentColor));
+	--_dur: var(--nav-duration, var(--anim-duration, .45s));
+	--_ease: var(--nav-ease, var(--anim-ease, ease));
+	--_stagger: var(--nav-stagger, 40ms);
+}
+
+// Visually hidden, not display: none: keyboard users can Tab to it and toggle it with Space.
+.nav-switch {
+	@include visually-hidden;
+}
+
+.nav .menu {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	left: 0;
+	z-index: 1;
+	display: grid;
+	grid-template-rows: 0fr;
+	visibility: hidden;
+	background: var(--_bg);
+	color: var(--_color);
+	transition:
+		grid-template-rows var(--_dur) var(--_ease),
+		visibility 0s var(--_dur);
+}
+
+.nav .menu > * {
+	min-height: 0;
+	overflow: hidden;
+}
+
+.nav-switch:checked ~ .menu {
+	grid-template-rows: 1fr;
+	visibility: visible;
+	transition:
+		grid-template-rows var(--_dur) var(--_ease),
+		visibility 0s;
+}
+
+.nav-list {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0 var(--gutter, 1.5rem);
+	list-style: none;
+}
+
+.nav-list > li {
+	padding-block: .6em;
+	opacity: 0;
+	transition: opacity var(--_dur) calc(var(--i, 0) * var(--_stagger));
+
+	&:last-child {
+		padding-block-end: 1.5em;
+	}
+}
+
+.nav-switch:checked ~ .menu .nav-list > li {
+	opacity: 1;
+}
+
+.nav-list a {
+	color: inherit;
+	text-decoration: none;
+
+	&:hover,
+	&[aria-current="page"] {
+		text-decoration: underline;
+	}
+}
+
+// Shown as a bar across the page, no panel: shared by inline variants above
+// their collapse point. Hides the switch and button, lays the list out in a row.
+@mixin nav-inline {
+	.nav-switch,
+	.hamburger {
+		display: none;
+	}
+
+	.menu {
+		position: static;
+		grid-template-rows: 1fr;
+		visibility: visible;
+		background: none;
+		color: inherit;
+		transition: none;
+	}
+
+	.menu > * {
+		overflow: visible;
+	}
+
+	.nav-list {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: .25em 1.25em;
+		padding: 0;
+	}
+
+	.nav-list > li {
+		padding: 0;
+		opacity: 1;
+		transition: none;
+	}
+}

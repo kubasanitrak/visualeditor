@@ -15,6 +15,7 @@ Contents
 7. [Moving content between local and live](#7-moving-content-between-local-and-live)
 8. [Writing a new migration (developers)](#8-writing-a-new-migration-developers)
 9. [Compiling the CSS (developers)](#9-compiling-the-css-developers)
+   and [choosing component variants](#choosing-component-variants-setup)
 10. [Removing the editor from a site](#10-removing-the-editor-from-a-site)
 11. [Troubleshooting](#11-troubleshooting)
 
@@ -75,10 +76,14 @@ phpMyAdmin: one row per applied migration.
 3. Copy `config/config.example.php` to `config/config.php` and fill in the
    database (`127.0.0.1`, port `8889`, `root` / `root`), `debug => true`,
    and the admin email + password hash (see [section 4](#4-admin-accounts-and-passwords)).
+   For development also set `library_path` to your checkout of the
+   component bank (`visualeditor_lib`).
 4. Run the installer ([section 1](#1-after-every-update-run-the-installer)).
    It creates the tables, the demo content and the admin account.
 5. Open http://localhost:8888/visualeditor/ for the site and
    http://localhost:8888/visualeditor/admin/ to log in.
+6. New project only: pick its component variants with the setup tool
+   ([section 9](#choosing-component-variants-setup)).
 
 ## 4. Admin accounts and passwords
 
@@ -145,7 +150,8 @@ Target: PHP 8.4, MariaDB 10.5, Apache with `mod_rewrite`.
    the whole `admin/` folder (replace it), plus any changed files in `site/`,
    `index.php` or `.htaccess`. After a style change that means the compiled
    `site/css/site.css` ([section 9](#9-compiling-the-css-developers)); the
-   server never compiles SCSS. Never overwrite `config/config.php` or
+   server never compiles SCSS. After running setup, upload `site/components/`,
+   `site/js/`, `site/project.json` and `site/css/site.css`. Never overwrite `config/config.php` or
    `uploads/`.
 2. Check the [migration log](#2-migration-log) for migrations the live
    database does not have yet (compare with its `schema_migrations` table).
@@ -242,6 +248,47 @@ browsers fetch the new CSS.
 - A new style class: add it to `_library.scss`, add its manifest entry in
   `site/styles.manifest.json`, recompile.
 - Commit the `.scss` change and the compiled `site.css` together.
+
+### Choosing component variants (setup)
+
+Header, menu button, navigation and footer come from the shared component
+bank (`visualeditor_lib`, a separate git repo). Each project picks the
+variants it uses with the setup tool, before editing starts. Setup copies
+them into the project, so the live site never needs the bank.
+
+1. In `config/config.php`, set `library_path` to the bank folder. Dart Sass
+   is found automatically; set `sass_path` only if it is somewhere unusual.
+2. Open http://localhost:8888/visualeditor/admin/tools/setup.php (localhost
+   only), tick the variants and press *Install selected*. Tick more than one
+   in a family to let the owner switch between them later. Or from the
+   project folder with MAMP's PHP:
+   ```
+   /Applications/MAMP/bin/php/php8.2.0/bin/php admin/tools/setup.php
+   /Applications/MAMP/bin/php/php8.2.0/bin/php admin/tools/setup.php install header/sticky menu-button/x nav/inline footer/default
+   ```
+   The first lists the bank (`*` = installed); the second installs exactly
+   that set.
+3. Setup then:
+   - copies each variant and its family base into `site/components/<family>/`
+     and removes families and variants that are no longer ticked;
+   - copies the bank's SCSS tools into `site/scss/core/`. The breakpoints
+     file `site/scss/core/settings/_breakpoints.scss` is copied only once,
+     so you can tune it per project (then recompile);
+   - writes `site/project.json` (what is installed, from which bank commit),
+     `site/scss/_components.scss` and `site/js/components.js`;
+   - copies GSAP to `site/js/vendor/` when a chosen variant needs it;
+   - recompiles `site/css/site.css`.
+4. Commit the result and upload it like any other change
+   ([section 6](#6-updating-a-live-site)).
+
+**Updating variants from the bank:** pull the bank, then run
+`setup.php update` (or press *Install selected* again with the same ticks).
+Installed variants are pinned: a change in the bank reaches a site only
+when you run setup for it.
+
+Never edit files in `site/components/` or the generated
+`_components.scss` / `components.js`; setup overwrites them. Change the
+variant in the bank instead.
 
 ## 10. Removing the editor from a site
 

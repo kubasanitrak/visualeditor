@@ -1,0 +1,23 @@
+{
+	"id": "nav/inline",
+	"family": "nav",
+	"label": "Inline, folds on small screens",
+	"description": "A row of links; below the chosen screen size it folds into a panel behind the menu button.",
+	"version": "1.0.0",
+	"class": "nav--inline",
+	"scss": "_inline.scss",
+	"needs": [],
+	"options": [
+		{
+			"id": "nav-collapse",
+			"label": "Fold into menu button",
+			"exclusive": true,
+			"default": "nav--collapse-tablet",
+			"classes": [
+				{ "class": "nav--collapse-never", "label": "Never" },
+				{ "class": "nav--collapse-tablet", "label": "On tablet and phone" },
+				{ "class": "nav--collapse-mobile", "label": "On phone only" }
+			]
+		}
+	]
+}

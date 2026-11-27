@@ -125,6 +125,466 @@ figcaption {
     transition: none !important;
   }
 }
+.footer {
+  --_bg: var(--footer-bg, transparent);
+  --_color: var(--footer-color, var(--color-text, currentColor));
+  padding: var(--footer-pad-y, 2.5rem) var(--gutter, 1.5rem);
+  background: var(--_bg);
+  color: var(--_color);
+}
+
+.footer__list,
+.footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em 1.25em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer a {
+  color: inherit;
+}
+
+.footer__text {
+  font-size: var(--fs-small, 0.875em);
+  opacity: 0.75;
+}
+
+.footer--default {
+  display: grid;
+  gap: 1rem;
+}
+@media screen and (min-width: 51.1rem) {
+  .footer--default {
+    grid-auto-flow: column;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+}
+
+.header {
+  --_bg: var(--header-bg, transparent);
+  --_color: var(--header-color, var(--color-text, currentColor));
+  --_dur: var(--header-duration, var(--anim-duration, .45s));
+  --_ease: var(--header-ease, var(--anim-ease, ease));
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em var(--gap, 1rem);
+  padding: var(--header-pad-y, 1rem) var(--gutter, 1.5rem);
+  background: var(--_bg);
+  color: var(--_color);
+  mix-blend-mode: var(--header-blend, normal);
+}
+
+.header__brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.75em;
+  color: inherit;
+  text-decoration: none;
+}
+
+.header__logo {
+  align-self: center;
+}
+.header__logo svg,
+.header__logo img {
+  display: block;
+  block-size: var(--logo-h, 2rem);
+  inline-size: auto;
+}
+
+.header__title {
+  font-weight: 600;
+}
+
+.header__tagline {
+  opacity: 0.7;
+}
+
+.header--center {
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.header--center .header__brand {
+  justify-content: center;
+}
+
+.header--overlay {
+  margin-block-end: calc(-1 * var(--header-h, 4.5rem));
+}
+
+.header--static {
+  position: relative;
+}
+
+.header--sticky {
+  position: sticky;
+  top: 0;
+}
+
+.header--slide {
+  position: sticky;
+  top: 0;
+  transition: top var(--_dur) var(--_ease);
+}
+.header--slide.is-hidden {
+  top: calc(-1 * var(--header-h, 100vh));
+}
+
+.hamburger {
+  --_size: var(--ham-size, var(--touch-S, 44px));
+  --_color: var(--ham-color, currentColor);
+  --_dur: var(--ham-duration, .3s);
+  --_ease: var(--ham-ease, var(--anim-ease, ease));
+  position: relative;
+  z-index: 2;
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: var(--_size);
+  block-size: var(--_size);
+  color: var(--_color);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-switch:focus-visible + .hamburger {
+  outline: 2px solid var(--ham-focus, var(--color-accent, currentColor));
+  outline-offset: 2px;
+}
+
+.hamburger--x {
+  --_w: var(--ham-icon-w, 24px);
+  --_stroke: var(--ham-stroke, 2px);
+  --_gap: var(--ham-gap, 7px);
+}
+.hamburger--x .hamburger__label {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.hamburger--x .hamburger__icon,
+.hamburger--x .hamburger__icon::before,
+.hamburger--x .hamburger__icon::after {
+  display: block;
+  inline-size: var(--_w);
+  block-size: var(--_stroke);
+  border-radius: var(--_stroke);
+  background-color: currentColor;
+}
+.hamburger--x .hamburger__icon {
+  position: relative;
+  transition: background-color 0s var(--_dur);
+}
+.hamburger--x .hamburger__icon::before,
+.hamburger--x .hamburger__icon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  transition: transform var(--_dur) var(--_ease);
+}
+.hamburger--x .hamburger__icon::before {
+  top: calc(-1 * var(--_gap));
+}
+.hamburger--x .hamburger__icon::after {
+  top: var(--_gap);
+}
+
+.nav-switch:checked + .hamburger--x .hamburger__icon {
+  background-color: transparent;
+  transition-delay: 0s;
+}
+.nav-switch:checked + .hamburger--x .hamburger__icon::before {
+  transform: translateY(var(--_gap)) rotate(45deg);
+}
+.nav-switch:checked + .hamburger--x .hamburger__icon::after {
+  transform: translateY(calc(-1 * var(--_gap))) rotate(-45deg);
+}
+
+.hamburger--dots {
+  --_dot: var(--ham-dot, 4px);
+  --_gap: var(--ham-gap, 7px);
+}
+.hamburger--dots .hamburger__label {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (pointer: coarse) {
+  .hamburger--dots {
+    --_dot: var(--ham-dot, 6px);
+    --_gap: var(--ham-gap, 9px);
+  }
+}
+.hamburger--dots .hamburger__icon,
+.hamburger--dots .hamburger__icon::before,
+.hamburger--dots .hamburger__icon::after {
+  display: block;
+  inline-size: var(--_dot);
+  block-size: var(--_dot);
+  border-radius: 50%;
+  background-color: currentColor;
+}
+.hamburger--dots .hamburger__icon {
+  position: relative;
+}
+.hamburger--dots .hamburger__icon::before,
+.hamburger--dots .hamburger__icon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  transition: transform var(--_dur) var(--_ease);
+}
+.hamburger--dots .hamburger__icon::before {
+  top: calc(-1 * var(--_gap));
+}
+.hamburger--dots .hamburger__icon::after {
+  top: var(--_gap);
+}
+
+.nav-switch:checked + .hamburger--dots .hamburger__icon::before {
+  transform: translateY(var(--_gap));
+}
+.nav-switch:checked + .hamburger--dots .hamburger__icon::after {
+  transform: translateY(calc(-1 * var(--_gap)));
+}
+
+.hamburger--text {
+  padding-inline: 0.5em;
+  text-transform: var(--ham-text-transform, uppercase);
+  letter-spacing: var(--ham-letter-spacing, 0.08em);
+  font-size: var(--ham-font-size, 0.875em);
+}
+.hamburger--text .hamburger__icon {
+  display: none;
+}
+.hamburger--text::after {
+  content: attr(data-close);
+  display: none;
+}
+
+.nav-switch:checked + .hamburger--text .hamburger__label {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.nav-switch:checked + .hamburger--text::after {
+  display: inline;
+}
+
+.nav {
+  --_bg: var(--nav-bg, var(--color-bg));
+  --_color: var(--nav-color, var(--color-text, currentColor));
+  --_dur: var(--nav-duration, var(--anim-duration, .45s));
+  --_ease: var(--nav-ease, var(--anim-ease, ease));
+  --_stagger: var(--nav-stagger, 40ms);
+}
+
+.nav-switch {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.nav .menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  background: var(--_bg);
+  color: var(--_color);
+  transition: grid-template-rows var(--_dur) var(--_ease), visibility 0s var(--_dur);
+}
+
+.nav .menu > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.nav-switch:checked ~ .menu {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows var(--_dur) var(--_ease), visibility 0s;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 var(--gutter, 1.5rem);
+  list-style: none;
+}
+
+.nav-list > li {
+  padding-block: 0.6em;
+  opacity: 0;
+  transition: opacity var(--_dur) calc(var(--i, 0) * var(--_stagger));
+}
+.nav-list > li:last-child {
+  padding-block-end: 1.5em;
+}
+
+.nav-switch:checked ~ .menu .nav-list > li {
+  opacity: 1;
+}
+
+.nav-list a {
+  color: inherit;
+  text-decoration: none;
+}
+.nav-list a:hover, .nav-list a[aria-current=page] {
+  text-decoration: underline;
+}
+
+.nav--inline.nav--collapse-never .nav-switch,
+.nav--inline.nav--collapse-never .hamburger {
+  display: none;
+}
+.nav--inline.nav--collapse-never .menu {
+  position: static;
+  grid-template-rows: 1fr;
+  visibility: visible;
+  background: none;
+  color: inherit;
+  transition: none;
+}
+.nav--inline.nav--collapse-never .menu > * {
+  overflow: visible;
+}
+.nav--inline.nav--collapse-never .nav-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.25em 1.25em;
+  padding: 0;
+}
+.nav--inline.nav--collapse-never .nav-list > li {
+  padding: 0;
+  opacity: 1;
+  transition: none;
+}
+
+@media screen and (min-width: 40.1rem) {
+  .nav--inline.nav--collapse-mobile .nav-switch,
+  .nav--inline.nav--collapse-mobile .hamburger {
+    display: none;
+  }
+  .nav--inline.nav--collapse-mobile .menu {
+    position: static;
+    grid-template-rows: 1fr;
+    visibility: visible;
+    background: none;
+    color: inherit;
+    transition: none;
+  }
+  .nav--inline.nav--collapse-mobile .menu > * {
+    overflow: visible;
+  }
+  .nav--inline.nav--collapse-mobile .nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.25em 1.25em;
+    padding: 0;
+  }
+  .nav--inline.nav--collapse-mobile .nav-list > li {
+    padding: 0;
+    opacity: 1;
+    transition: none;
+  }
+}
+@media screen and (min-width: 51.1rem) {
+  .nav--inline.nav--collapse-tablet .nav-switch,
+  .nav--inline.nav--collapse-tablet .hamburger {
+    display: none;
+  }
+  .nav--inline.nav--collapse-tablet .menu {
+    position: static;
+    grid-template-rows: 1fr;
+    visibility: visible;
+    background: none;
+    color: inherit;
+    transition: none;
+  }
+  .nav--inline.nav--collapse-tablet .menu > * {
+    overflow: visible;
+  }
+  .nav--inline.nav--collapse-tablet .nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.25em 1.25em;
+    padding: 0;
+  }
+  .nav--inline.nav--collapse-tablet .nav-list > li {
+    padding: 0;
+    opacity: 1;
+    transition: none;
+  }
+}
+.nav--foldable.nav--panel-full .menu {
+  position: fixed;
+  inset: 0;
+  grid-template-rows: 1fr;
+  align-content: center;
+  opacity: 0;
+  overflow-y: auto;
+  transition: opacity var(--_dur) var(--_ease), visibility 0s var(--_dur);
+}
+.nav--foldable.nav--panel-full .menu > * {
+  overflow: visible;
+}
+.nav--foldable.nav--panel-full .nav-list {
+  align-items: center;
+  font-size: var(--nav-full-size, 1.6em);
+}
+.nav--foldable.nav--panel-full .hamburger {
+  z-index: 2;
+}
+
+.nav--foldable.nav--panel-full .nav-switch:checked ~ .menu {
+  opacity: 1;
+  transition: opacity var(--_dur) var(--_ease), visibility 0s;
+}
+
 /* ==========================================================================
    Style library v1 — predefined classes the editor offers.
    Every class here has an entry in site/styles.manifest.json.

@@ -1,0 +1,18 @@
+// nav/inline: a row of links that folds behind the menu button below a
+// collapse point. One precompiled class per option (media queries can't use
+// custom properties); the points come from core/settings/breakpoints.
+@use 'core/settings/breakpoints' as bp;
+@use 'core/tools/mixins' as *;
+@use '../base' as *;
+
+.nav--inline.nav--collapse-never {
+	@include nav-inline;
+}
+
+@each $name, $width in bp.$collapse-points {
+	@include above($width) {
+		.nav--inline.nav--collapse-#{$name} {
+			@include nav-inline;
+		}
+	}
+}

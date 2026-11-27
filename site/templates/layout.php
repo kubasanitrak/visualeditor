@@ -29,6 +29,6 @@ $bodyAttr = ve_page_body($page);
 <main class="ve-main">
 <?= $body ?>
 </main>
-<script src="<?= e(ve_url('site/js/site.js')) ?>" defer></script>
+<script type="module" src="<?= e(ve_url('site/js/site.js')) ?>?v=<?= @filemtime(__DIR__ . '/../js/site.js') ?: 0 ?>"></script>
 </body>
 </html>

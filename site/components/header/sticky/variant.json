@@ -1,0 +1,10 @@
+{
+	"id": "header/sticky",
+	"family": "header",
+	"label": "Sticky",
+	"description": "Stays at the top of the screen while the page scrolls.",
+	"version": "1.0.0",
+	"class": "header--sticky",
+	"scss": "_sticky.scss",
+	"needs": []
+}

@@ -28,7 +28,9 @@ site/templates/      layout.php + items/<type>.php (section, row, col, heading, 
 site/scss/           main.scss + _tokens, _base, _components (generated), _library (style classes)
 site/css/site.css    compiled from site/scss (Dart Sass, committed; never edit by hand)
 site/components.json component presets the editor can add (item trees)
-site/js/site.js      scroll-triggered animations
+site/js/site.js      ES module: scroll-triggered animations, imports components.js
+site/components/     installed component variants (copied by setup; never edit here)
+site/project.json    variants installed + bank commit (written by setup)
 admin/               admin core: install.php, migrations/, bootstrap.php, login/logout.php, api.php, lib/, assets/ (editor.js, editor.css, js/)
 config/config.php    local settings + admin email/password hash. NOT in git; never commit it.
 uploads/             media; uploads/demo/ holds seed placeholders
@@ -51,7 +53,8 @@ Tables: `pages`, `items` (tree via `parent_id` + `sort`; `content`/`settings` ar
 
 - Install / migrate: http://localhost:8888/visualeditor/admin/install.php (localhost only), or `php admin/install.php` with MAMP's PHP.
 - Site: http://localhost:8888/visualeditor/ (also `/about`, and any unknown slug shows the 404 page).
-- Lint: `php -l <file>`.
+- Lint: `php -l <file>` (system `php` is 7.4; use MAMP's `/Applications/MAMP/bin/php/php8.2.0/bin/php` to run tools).
+- Component variants: `admin/tools/setup.php` (localhost page or CLI: no args = list, `install <id>...`, `update`); bank path in config `library_path`. Generates `site/scss/_components.scss`, `site/js/components.js`, `site/project.json`.
 - Compile CSS: `sass --no-source-map --load-path=site/scss site/scss/main.scss site/css/site.css` (Dart Sass, `/opt/homebrew/bin/sass`; never the Ruby Sass in `/usr/local/bin`). Commit SCSS + compiled CSS together.
 - Phase 0 check: rename `admin/` to `_admin/`, the site must still render, then rename it back.
 
